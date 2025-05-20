@@ -1,0 +1,39 @@
+@charset 'UTF-8';
+/*スライドショーCSS*/
+#slideshow {
+  position: relative;
+  width: 1260px; /* 任意のサイズ */
+  height: 880px;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  z-index: 0;
+}
+
+.slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+/*index.phpCSS*/
+h1{
+    text-align: center;
+}
+#history,#recommend,#sale{
+    display: flex;
+    flex-direction: row;
+}
+.product_genre{
+    width: 160px;
+    height: 200px;
+    background-color: aqua;
+    margin: 30px;
+}
