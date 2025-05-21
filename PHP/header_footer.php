@@ -38,7 +38,7 @@
   </header>
   <div class="header_space"></div>
 
-  <!-- header -->
+    <!-- header -->
   <header class="header">
     <div class="header_container">
       <div class="header_menu">
@@ -55,7 +55,7 @@
         </div>
       </div>
       <div class="header_logo">
-        <h1>Fitty</h1>
+        <h1>fitty.</h1>
       </div>
       <nav class="header_nav">
         <a href="#">マイページ</a>
@@ -68,11 +68,11 @@
   <div class="header_space"></div>
   <!-- header -->
 
-  <!-- footer -->
+      <!-- footer -->
   <footer class="footer">
     <div class="footer_container">
       <div class="footer_logo">
-        <h2>Fitty</h2>
+        <h2>fitty.</h2>
       </div>
       <div class="footer_links">
         <a href="#">会社概要</a>
@@ -85,7 +85,7 @@
         <a href="#" aria-label="Facebook"><img src="icons/facebook.svg" alt="Facebook"></a>
       </div>
       <div class="footer_copy">
-        <small>&copy; 2025 Fitty All rights reserved.</small>
+        <small>&copy; 2025 fitty. All rights reserved.</small>
       </div>
     </div>
   </footer>
