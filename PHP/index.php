@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fitty.|トップページ</title>
+    <link rel="stylesheet" href="../CSS/reset.css">
     <link rel="stylesheet" href="../CSS/index.css">
 </head>
 
@@ -18,6 +19,7 @@
             </div>
             <h1>最近見たもの</h1>
             <div id="history">
+                <div class="product_genre"></div>
                 <div class="product_genre"></div>
                 <div class="product_genre"></div>
                 <div class="product_genre"></div>
