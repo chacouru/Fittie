@@ -44,14 +44,17 @@ h1 {
 
 .button_container {
   display: flex;
-  flex-direction: column;
-  justify-content: center; /* 中央揃え */
-  gap: 20px; /* ボタン間の間隔 */
-  margin-top: 30px; /* 上部の余白 */
+  flex-direction: column;      /* ボタンを縦に並べる */
+  align-items: center;         /* 横方向の中央揃え */
+  justify-content: center;     /* 縦方向の中央揃え */
+  gap: 20px;                   /* ボタン間の間隔 */
+  margin-top: 30px;            /* 上部の余白 */
 }
+
 
 .button_container input[type="reset"],
 .button_container button[type="submit"] {
+  width: 200px;
   padding: 10px 20px;
   font-size: 16px;
   border: none;
@@ -73,7 +76,7 @@ h1 {
     background-color: #ccccccd2;
     padding: 0;
     width: 700px;
-    height: 800px;
+    height: 889px;
     margin: 0 auto;
 }
 main{
