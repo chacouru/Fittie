@@ -1,0 +1,49 @@
+@charset 'UTF-8';
+
+h1 {
+    text-align: center;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    /* 子要素を縦に並べる */
+    align-items: center;
+    /* 子要素を水平方向に中央揃え */
+    gap: 50px;
+    /* 子要素間の間隔を20pxに設定 */
+    margin-top: 50px;
+}
+
+.select_container select {
+    width: 300px;
+    /* 横幅を300ピクセルに設定 */
+    height: 50px;
+    /* 高さを50ピクセルに設定 */
+    font-size: 18px;
+    /* 文字サイズを18ピクセルに設定 */
+    padding: 10px 12px;
+    /* 内側の余白を上下10ピクセル、左右12ピクセルに設定 */
+    border: 1px solid #ccc;
+    /* 枠線を設定 */
+    border-radius: 4px;
+    /* 角を丸める */
+    box-sizing: border-box;
+    /* パディングとボーダーを含めてサイズを計算 */
+    text-align: center;
+    color: powderblue;
+}
+
+.select_container {
+    background-color: pink;
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px;
+    text-align: center;
+}
+
+button {
+    display: block;
+    margin: 0 auto;
+    margin-top: 50px;
+}
