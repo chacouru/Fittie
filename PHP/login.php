@@ -15,11 +15,11 @@
         <form action="login.php" method="POST">
             <div class="form_group">
                 <label for="email">メールアドレス</label>
-                <input type="email" id="email" name="email" required />
+                <input type="email" id="email" name="email" required>
             </div>
             <div class="form_group">
                 <label for="password">パスワード</label>
-                <input type="password" id="password" name="password" required />
+                <input type="password" id="password" name="password" required>
             </div>
             <button type="submit">ログイン</button>
         </form>
