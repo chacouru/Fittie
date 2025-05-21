@@ -29,6 +29,7 @@
                 <div class="product_genre"></div>
                 <div class="product_genre"></div>
                 <div class="product_genre"></div>
+                <div class="product_genre"></div>
             </div>
             <h1>おすすめ商品</h1>
             <div id="recommend">
