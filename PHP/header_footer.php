@@ -10,33 +10,6 @@
 </head>
 
 <body>
-   <header class="header">
-    <div class="header_container">
-      <div class="header_menu">
-        <div class="menu_button" id="menuToggle">
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
-        </div>
-        <div class="menu_overlay">
-          <a href="#" class="brand_link link1">ブランドA</a>
-          <a href="#" class="brand_link link2">ブランドB</a>
-          <a href="#" class="brand_link link3">ブランドC</a>
-          <a href="#" class="brand_link link4">ブランドD</a>
-        </div>
-      </div>
-      <div class="header_logo">
-        <h1>Fitty</h1>
-      </div>
-      <nav class="header_nav">
-        <a href="#">マイページ</a>
-        <a href="#">カート</a>
-        <a href="#">検索</a>
-        <a href="#">お問い合わせ</a>
-      </nav>
-    </div>
-  </header>
-  <div class="header_space"></div>
 
     <!-- header -->
   <header class="header">
