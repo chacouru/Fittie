@@ -1,0 +1,42 @@
+@charset 'UTF-8';
+
+main {
+  max-width: 800px;
+  margin: 200px auto 80px auto;
+  padding: 0 20px;
+  text-align: center;
+  padding-bottom: 80px;
+}
+
+
+main h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+main p {
+  font-size: 1.2em;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.footer {
+  margin-top: 180px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  main {
+    margin: 80px auto 40px auto;
+    padding: 0 15px;
+  }
+
+  main h1 {
+    font-size: 1.5em;
+  }
+
+  main p {
+    font-size: 1em;
+  }
+}
