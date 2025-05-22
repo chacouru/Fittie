@@ -39,41 +39,20 @@
   </header>
   <div class="header_space"></div>
 <main>
-  
-      <div class="container">
-          <h1 class="cart-title">カートに入っている商品：○○点</h1>
-  
-          <div class="cart-item">
-              <div class="item-image"></div>
-              <div class="item-details">
-                  <div class="item-brand">ブランド名</div>
-                  <div class="item-name">商品名</div>
-                  <div class="item-size">サイズ</div>
-                  <div class="item-price">価格</div>
-                  <div class="quantity-controls">
-                      <span class="quantity-label">数量</span>
-                      <button class="quantity-btn" onclick="decreaseQuantity(1)">-</button>
-                      <input type="number" class="quantity-input" value="1" id="qty1" readonly>
-                      <button class="quantity-btn" onclick="increaseQuantity(1)">+</button>
-                  </div>
-              </div>
-          </div>
-  
-          <div class="cart-item">
-              <div class="item-image"></div>
-              <div class="item-details">
-                  <div class="item-brand">ブランド名</div>
-                  <div class="item-name">商品名</div>
-                  <div class="item-size">サイズ</div>
-                  <div class="item-price">価格</div>
-                  <div class="quantity-controls">
-                      <span class="quantity-label">数量</span>
-                      <button class="quantity-btn" onclick="decreaseQuantity(2)">-</button>
-                      <input type="number" class="quantity-input" value="1" id="qty2" readonly>
-                      <button class="quantity-btn" onclick="increaseQuantity(2)">+</button>
-                  </div>
-              </div>
-          </div>
+          <div class="container">
+        <h1 class="cart_title" id="cart_title">カートに入っている商品：0点</h1>
+        
+        <div id="cart_items_container">
+            <!-- 商品アイテムがここに動的に表示されます -->
+        </div>
+
+        <div class="total_section">
+            <div class="total_label">合計（税込）</div>
+            <div class="total_price">¥3,456</div>
+        </div>
+
+        <button class="checkout_btn">レジへ進む</button>
+    </div>
 </main>
 
 
@@ -105,21 +84,6 @@
 </body>
 
 <script src="../JavaScript/hamburger.js"></script>
-
-    <script>
-        function increaseQuantity(itemId) {
-            const input = document.getElementById('qty' + itemId);
-            let currentValue = parseInt(input.value);
-            input.value = currentValue + 1;
-        }
-
-        function decreaseQuantity(itemId) {
-            const input = document.getElementById('qty' + itemId);
-            let currentValue = parseInt(input.value);
-            if (currentValue > 1) {
-                input.value = currentValue - 1;
-            }
-        }
-    </script>
+<script src="../JavaScript/cart.js"></script>
 
 </html>
