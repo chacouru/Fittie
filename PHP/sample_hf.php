@@ -30,6 +30,28 @@
     </div>
     <div class="header_space"></div>
   
+    <footer class="footer">
+    <div class="footer_container">
+      <div class="footer_logo">
+        <h2>Fitty</h2>
+      </div>
+      <div class="footer_links">
+        <a href="#">会社概要</a>
+        <a href="#">利用規約</a>
+        <a href="#">プライバシーポリシー</a>
+      </div>
+      <div class="footer_sns">
+        <a href="#" aria-label="Twitter"><img src="icons/twitter.svg" alt="Twitter"></a>
+        <a href="#" aria-label="Instagram"><img src="icons/instagram.svg" alt="Instagram"></a>
+        <a href="#" aria-label="Facebook"><img src="icons/facebook.svg" alt="Facebook"></a>
+      </div>
+      <div class="footer_copy">
+        <small>&copy; 2025 Fitty All rights reserved.</small>
+      </div>
+    </div>
+  </footer>
+    
+    
     <script src="../JavaScript/hamburger.js"></script>
 </body>
 
