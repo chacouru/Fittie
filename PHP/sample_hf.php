@@ -13,7 +13,9 @@
 </head>
 
 <body>
-    <header class="header"> <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
+    <!-- headerここから -->
+    <header class="header"> 
+        <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
         <div class="header_logo">
             <h1>fitty.</h1>
         </div>
@@ -29,7 +31,7 @@
         </nav>
     </div>
     <div class="header_space"></div>
-  
+  <!-- headerここまで -->
     <script src="../JavaScript/hamburger.js"></script>
 </body>
 
