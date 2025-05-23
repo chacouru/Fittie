@@ -5,12 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>カート | fitty.</title>
-  <link rel="stylesheet" href="../CSS/common.css">
   <link rel="stylesheet" href="../CSS/reset.css">
+  <link rel="stylesheet" href="../CSS/common.css">
   <link rel="stylesheet" href="../CSS/cart.css">
 </head>
 
 <body>
+  <!-- headerここから -->
    <header class="header">
     <div class="header_container">
       <div class="header_menu">
@@ -38,6 +39,7 @@
     </div>
   </header>
   <div class="header_space"></div>
+    <!-- headerここまで -->
 <main>
           <div class="container">
         <h1 class="cart_title" id="cart_title">カートに入っている商品：0点</h1>
@@ -80,10 +82,10 @@
   <!-- footer -->
 
 
-
-</body>
-
 <script src="../JavaScript/hamburger.js"></script>
 <script src="../JavaScript/cart.js"></script>
+</body>
+
+
 
 </html>
