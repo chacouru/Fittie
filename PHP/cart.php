@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>カート | fitty.</title>
-  <link rel="stylesheet" href="../CSS/common.css">
+  <title>fitty. | カート</title>
   <link rel="stylesheet" href="../CSS/reset.css">
+  <link rel="stylesheet" href="../CSS/common.css">
   <link rel="stylesheet" href="../CSS/cart.css">
 </head>
 
@@ -27,13 +27,13 @@
         </div>
       </div>
       <div class="header_logo">
-        <h1>Fitty</h1>
+        <h1><a href="./index.php">fitty.</a></h1>
       </div>
       <nav class="header_nav">
-        <a href="#">マイページ</a>
-        <a href="#">カート</a>
-        <a href="#">検索</a>
-        <a href="#">お問い合わせ</a>
+        <a href="./mypage.php">マイページ</a>
+        <a href="./cart.php">カート</a>
+        <a href="./search.php">検索</a>
+        <a href="./contact.php">お問い合わせ</a>
       </nav>
     </div>
   </header>
@@ -56,11 +56,7 @@
 </main>
 
 
-<<<<<<< HEAD
-      <!-- footer -->
-=======
 <!-- footer -->
->>>>>>> a826b6f497139443ab5d5d21dbc7b3c0b2c1f8c5
   <footer class="footer">
     <div class="footer_container">
       <div class="footer_logo">
@@ -82,9 +78,6 @@
     </div>
   </footer>
   <!-- footer -->
-
-
-
 </body>
 
 <script src="../JavaScript/hamburger.js"></script>
