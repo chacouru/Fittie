@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fitty. | Q&A</title>
+    <title>Q&A | fitty.</title>
     <link rel="stylesheet" href="../CSS/common.css">
   <link rel="stylesheet" href="../CSS/reset.css">
   <link rel="stylesheet" href="../CSS/qa.css">
@@ -11,30 +11,6 @@
 <body>
 
 <main>
-  <!-- headerここから -->
-  <header class="header">
-    <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
-    <div class="header_logo">
-      <h1><a href="./index.php">fitty.</a></h1>
-    </div>
-    <nav class="header_nav"> 
-      <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
-      <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
-      <a href="./search.php" class="icon-search" title="検索">🔍</a> 
-      <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a> 
-    </nav>
-  </header>
-  <div class="backdrop" id="menuBackdrop"></div>
-  <div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
-    <nav>
-      <a href="#" role="menuitem" class="bland brand1">ブランドA</a>
-      <a href="#" role="menuitem" class="bland brand2">ブランドB</a>
-      <a href="#" role="menuitem" class="bland brand3">ブランドC</a>
-      <a href="#" role="menuitem" class="bland brand4">ブランドD</a>
-    </nav>
-  </div>
-  <div class="header_space"></div>
-  <!-- headerここまで -->
     <h1>Q&A</h1>
 
     <p>Q1. サイズ選びに迷っています。どのように選べばよいですか？</p>
@@ -59,6 +35,9 @@
     <p>A10. マイページの「会員情報の変更」からメールマガジンの配信設定を変更いただけます。</p>
 
 </main>
+<<<<<<< HEAD
+
+=======
   <!-- footer -->
   <footer class="footer">
     <div class="footer_container">
@@ -82,5 +61,6 @@
   </footer>
   <!-- footer -->
    <script src="../JavaScript/hamburger.js"></script>
+>>>>>>> a826b6f497139443ab5d5d21dbc7b3c0b2c1f8c5
 </body>
 </html>

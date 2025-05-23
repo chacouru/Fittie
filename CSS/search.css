@@ -1,8 +1,7 @@
 @charset 'UTF-8';
 
-#title{
+h1 {
     text-align: center;
-    padding-top: 50px;
 }
 
 .form_container {
@@ -86,4 +85,3 @@ main{
     background-position: center;
     background-size: cover;
 }
-

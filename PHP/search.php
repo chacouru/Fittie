@@ -4,40 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fitty. | 探す</title>
+    <title>探す | fitty.</title>
     <link rel="stylesheet" href="../CSS/reset.css">
     <link rel="stylesheet" href="../CSS/common.css">
     <link rel="stylesheet" href="../CSS/search.css">
 </head>
 
 <body>
-<!-- headerここから -->
+    <!-- header -->
   <header class="header">
-    <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
-    <div class="header_logo">
-      <h1><a href="./index.php">fitty.</a></h1>
+    <div class="header_container">
+      <div class="header_menu">
+        <div class="menu_button" id="menuToggle">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+        <div class="menu_overlay">
+          <a href="#" class="brand_link link1">ブランドA</a>
+          <a href="#" class="brand_link link2">ブランドB</a>
+          <a href="#" class="brand_link link3">ブランドC</a>
+          <a href="#" class="brand_link link4">ブランドD</a>
+        </div>
+      </div>
+      <div class="header_logo">
+        <h1>fitty.</h1>
+      </div>
+      <nav class="header_nav">
+        <a href="#">マイページ</a>
+        <a href="#">カート</a>
+        <a href="#">検索</a>
+        <a href="#">お問い合わせ</a>
+      </nav>
     </div>
-    <nav class="header_nav"> 
-      <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
-      <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
-      <a href="./search.php" class="icon-search" title="検索">🔍</a> 
-      <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a> 
-    </nav>
   </header>
-  <div class="backdrop" id="menuBackdrop"></div>
-  <div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
-    <nav>
-      <a href="#" role="menuitem" class="bland brand1">ブランドA</a>
-      <a href="#" role="menuitem" class="bland brand2">ブランドB</a>
-      <a href="#" role="menuitem" class="bland brand3">ブランドC</a>
-      <a href="#" role="menuitem" class="bland brand4">ブランドD</a>
-    </nav>
-  </div>
   <div class="header_space"></div>
-  <!-- headerここまで -->
+  <!-- header -->
+
     <main>
         <form action="" class="form_box">
-            <h1 id="title">探す</h1>
+            <h1>探す</h1>
         <div class="form_container">
         <div class="select_container">
             <select name="brand">
@@ -75,7 +81,7 @@
   <footer class="footer">
     <div class="footer_container">
       <div class="footer_logo">
-        <h2><a href="./index.php">fitty.</a></h2>
+        <h2>fitty.</h2>
       </div>
       <div class="footer_links">
         <a href="./overview.php">会社概要</a>
@@ -93,7 +99,7 @@
     </div>
   </footer>
   <!-- footer -->
-<script src="../JavaScript/hamburger.js"></script>
-</body>
 
+</body>
+<script src="../JavaScript/hamburger.js"></script>
 </html>
