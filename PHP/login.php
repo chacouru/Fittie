@@ -16,7 +16,12 @@
         <div class="header_logo">
             <h1>fitty.</h1>
         </div>
-        <nav class="header_nav"> <a href="#" class="icon-user" title="マイページ">👤</a> <a href="#" class="icon-cart" title="カート">🛒</a> <a href="#" class="icon-search" title="検索">🔍</a> <a href="#" class="icon-contact" title="お問い合わせ">✉️</a> </nav>
+        <nav class="header_nav">
+           <a href="#" class="icon-user" title="マイページ">👤</a> 
+           <a href="#" class="icon-cart" title="カート">🛒</a>
+            <a href="#" class="icon-search" title="検索">🔍</a> 
+            <a href="#" class="icon-contact" title="お問い合わせ">✉️</a>
+           </nav>
     </header>
     <div class="backdrop" id="menuBackdrop"></div>
     <div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
@@ -30,7 +35,6 @@
     <div class="header_space"></div>
   <!-- headerここまで -->
    <main>
-     
       <div class="login_container">
           <h1>ログイン</h1>
           <form action="login.php" method="POST">
