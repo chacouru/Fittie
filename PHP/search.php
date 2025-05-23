@@ -48,9 +48,16 @@
         <div class="select_container">
             <select name="brand">
                 <option value="" selected disabled hidden>ブランド</option>
-                <option value="1">HARE</option>
-                <option value="2">ONCILY</option>
-                <option value="3">LACOSTE</option>
+                <option value="1">Woven Whisper</option>
+                <option value="2">Lush Loom</option>
+                <option value="3">Velvet Verse</option>
+                <option value="4">Urban Threads</option>
+                <option value="5">Chic Beacon</option>
+                <option value="6">Fad Fizz</option>
+                <option value="7">ADOOR</option>
+                <option value="8">KARAQURI</option>
+                <option value="9">FAR-EAST</option>
+                <option value="10">ON°</option>
             </select>
         </div>
         <div class="select_container">
