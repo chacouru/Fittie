@@ -15,7 +15,7 @@
   <header class="header">
     <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
     <div class="header_logo">
-      <h1>fitty.</h1>
+    <h1><a href="./index.php">fitty.</a></h1>
     </div>
     <nav class="header_nav"> 
       <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
@@ -65,7 +65,7 @@
     <footer class="footer">
         <div class="footer_container">
             <div class="footer_logo">
-                <h2>fitty.</h2>
+        <h2><a href="./index.php">fitty.</a></h2>
             </div>
             <div class="footer_links">
                 <a href="#">会社概要</a>
