@@ -162,15 +162,20 @@ function isActive($currentTab, $tabName) {
     </div>
 </div>
 
+<<<<<<< HEAD
  <footer class="footer">
+=======
+<!-- footer -->
+  <footer class="footer">
+>>>>>>> a826b6f497139443ab5d5d21dbc7b3c0b2c1f8c5
     <div class="footer_container">
       <div class="footer_logo">
         <h2>Fitty</h2>
       </div>
       <div class="footer_links">
-        <a href="#">会社概要</a>
-        <a href="#">利用規約</a>
-        <a href="#">プライバシーポリシー</a>
+        <a href="./overview.php">会社概要</a>
+        <a href="./terms.php">利用規約</a>
+        <a href="./privacy.php">プライバシーポリシー</a>
       </div>
       <div class="footer_sns">
         <a href="#" aria-label="Twitter"><img src="icons/twitter.svg" alt="Twitter"></a>
@@ -178,11 +183,16 @@ function isActive($currentTab, $tabName) {
         <a href="#" aria-label="Facebook"><img src="icons/facebook.svg" alt="Facebook"></a>
       </div>
       <div class="footer_copy">
-        <small>&copy; 2025 Fitty All rights reserved.</small>
+        <small>&copy; 2025 fitty. All rights reserved.</small>
       </div>
     </div>
   </footer>
+<<<<<<< HEAD
     
+=======
+  <!-- footer -->
+     <script src="../JavaScript/hamburger.js"></script>
+>>>>>>> a826b6f497139443ab5d5d21dbc7b3c0b2c1f8c5
 </body>
 
 <script src="../JavaScript/hamburger.js"></script>

@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fitty. | 会社概要</title>
-    <link rel="stylesheet" href="../CSS/reset.css">
-    <link rel="stylesheet" href="../CSS/common.css">
-    <link rel="stylesheet" href="../CSS/overview.css">
+    <title>fitty. | お問い合わせ</title>
+      <link rel="stylesheet" href="../CSS/common.css">
+  <link rel="stylesheet" href="../CSS/reset.css">
+  <link rel="stylesheet" href="../CSS/contact.css">
 </head>
 <body>
     <!-- headerここから -->
@@ -33,15 +33,28 @@
   </div>
   <div class="header_space"></div>
   <!-- headerここまで -->
-<main>
-    <h1 id="title">会社概要</h1>
-    <p>会社名：株式会社fitty.（フィッティー）</p>
-    <p>設立：2025年5月23日</p>
-    <p>所在地：東京都〇〇区〇〇1-1-11</p>
-    <p>代表者：代表取締役 Nguyễn Thị Minh Anh-Lê <br>(グエン・ティ・ミン・アイン＝レー)</p>
-    <img src="./img/ceo.jpeg" alt="ceo">
-    <p>資本金：1,000万円</p>
-
+    <main>
+        <h1>お問い合わせ</h1>
+    
+      <div class="contact_container">
+        <form action="/send-inquiry" method="POST">
+          <label for="name">お名前 <span class="required">*</span></label>
+          <input type="text" id="name" name="name" required>
+    
+          <label for="email">メールアドレス <span class="required">*</span></label>
+          <input type="email" id="email" name="email" required>
+    
+          <label for="subject">件名 <span class="required">*</span></label>
+          <input type="text" id="subject" name="subject" required>
+    
+          <label for="message">お問い合わせ内容 <span class="required">*</span></label>
+          <textarea id="message" name="message" required></textarea>
+    
+          <div class="form_note">※ すべての項目をご記入の上、送信してください。</div>
+    
+          <button type="submit">送信</button>
+        </form>
+      </div>
 </main>
 <!-- footer -->
   <footer class="footer">
@@ -65,6 +78,6 @@
     </div>
   </footer>
   <!-- footer -->
-   <script src="../JavaScript/hamburger.js"></script>
+<script src="../JavaScript/hamburger.js"></script>
 </body>
 </html>
