@@ -37,6 +37,29 @@
   </div>
   <div class="header_space"></div>
   <!-- headerここまで -->
+
+  <!-- footer -->
+  <footer class="footer">
+    <div class="footer_container">
+      <div class="footer_logo">
+        <h2><a href="./index.php">fitty.</a></h2>
+      </div>
+      <div class="footer_links">
+        <a href="./overview.php">会社概要</a>
+        <a href="./terms.php">利用規約</a>
+        <a href="./privacy.php">プライバシーポリシー</a>
+      </div>
+      <div class="footer_sns">
+        <a href="#" aria-label="Twitter"><img src="icons/twitter.svg" alt="Twitter"></a>
+        <a href="#" aria-label="Instagram"><img src="icons/instagram.svg" alt="Instagram"></a>
+        <a href="#" aria-label="Facebook"><img src="icons/facebook.svg" alt="Facebook"></a>
+      </div>
+      <div class="footer_copy">
+        <small>&copy; 2025 fitty. All rights reserved.</small>
+      </div>
+    </div>
+  </footer>
+  <!-- footer -->
     <script src="../JavaScript/hamburger.js"></script>
 </body>
 
