@@ -35,9 +35,6 @@
     <p>A10. マイページの「会員情報の変更」からメールマガジンの配信設定を変更いただけます。</p>
 
 </main>
-<<<<<<< HEAD
-
-=======
   <!-- footer -->
   <footer class="footer">
     <div class="footer_container">
@@ -61,6 +58,5 @@
   </footer>
   <!-- footer -->
    <script src="../JavaScript/hamburger.js"></script>
->>>>>>> a826b6f497139443ab5d5d21dbc7b3c0b2c1f8c5
 </body>
 </html>

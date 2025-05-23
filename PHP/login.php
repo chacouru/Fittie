@@ -26,8 +26,6 @@
         <p><a href="#">パスワードをお忘れですか？</a></p>
         <p><a href="./register.php">▶ 新規会員登録はこちら</a></p> <!-- 新規登録ページへのリンク -->
     </div>
-<<<<<<< HEAD
-=======
     <nav class="header_nav"> 
       <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
       <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
@@ -88,7 +86,6 @@
   </footer>
   <!-- footer -->
    <script src="../JavaScript/hamburger.js"></script>
->>>>>>> a826b6f497139443ab5d5d21dbc7b3c0b2c1f8c5
 </body>
 
 </html>

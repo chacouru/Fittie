@@ -88,12 +88,8 @@
             </div>
     </div>
     </main>
-<<<<<<< HEAD
-    <footer class="footer">
-=======
 <!-- footer -->
   <footer class="footer">
->>>>>>> a826b6f497139443ab5d5d21dbc7b3c0b2c1f8c5
     <div class="footer_container">
       <div class="footer_logo">
         <h2>Fitty</h2>
