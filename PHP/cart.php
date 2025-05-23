@@ -56,16 +56,20 @@
 </main>
 
 
+<<<<<<< HEAD
       <!-- footer -->
+=======
+<!-- footer -->
+>>>>>>> a826b6f497139443ab5d5d21dbc7b3c0b2c1f8c5
   <footer class="footer">
     <div class="footer_container">
       <div class="footer_logo">
         <h2>fitty.</h2>
       </div>
       <div class="footer_links">
-        <a href="#">会社概要</a>
-        <a href="#">利用規約</a>
-        <a href="#">プライバシーポリシー</a>
+        <a href="./overview.php">会社概要</a>
+        <a href="./terms.php">利用規約</a>
+        <a href="./privacy.php">プライバシーポリシー</a>
       </div>
       <div class="footer_sns">
         <a href="#" aria-label="Twitter"><img src="icons/twitter.svg" alt="Twitter"></a>
