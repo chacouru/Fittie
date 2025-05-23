@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../CSS/reset.css">
     <link rel="stylesheet" href="../CSS/common.css">
+  <link rel="stylesheet" href="../CSS/reset.css">
     <link rel="stylesheet" href="../CSS/mypage.css">
     
     <title>fitty.|マイページ</title>
 </head>
 <body>
+  <!-- headerここから -->
      <header class="header">
     <div class="header_container">
       <div class="header_menu">
@@ -37,6 +38,7 @@
     </div>
   </header>
   <div class="header_space"></div>
+    <!-- headerここまで -->
 
 <?php
 // セッション開始
@@ -162,6 +164,7 @@ function isActive($currentTab, $tabName) {
     </div>
 </div>
 
+<!-- footer -->
  <footer class="footer">
     <div class="footer_container">
       <div class="footer_logo">
@@ -182,9 +185,10 @@ function isActive($currentTab, $tabName) {
       </div>
     </div>
   </footer>
-    
+    <!-- footer -->
+     <script src="../JavaScript/hamburger.js"></script>
 </body>
 
-<script src="../JavaScript/hamburger.js"></script>
+
 
 </html>

@@ -31,7 +31,7 @@
   <!-- headerここまで -->
     <main>
         <form action="" class="form_box">
-            <h1>探す</h1>
+            <h1 id="title">探す</h1>
         <div class="form_container">
         <div class="select_container">
             <select name="brand">
@@ -87,7 +87,7 @@
     </div>
   </footer>
   <!-- footer -->
-
-</body>
 <script src="../JavaScript/hamburger.js"></script>
+</body>
+
 </html>
