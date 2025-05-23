@@ -20,7 +20,7 @@ main {
   padding-right: 160px; /* 画像スペース確保 */
 }
 
-h1 {
+#title {
   font-size: 2.2rem;
   color: #222;
   border-bottom: 3px solid #0078d7;

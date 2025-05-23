@@ -268,6 +268,15 @@ body {
     color: #ff6666;
 }
 
+.footer_logo h2 a,
+.footer_logo h2 a:visited,
+.footer_logo h2 a:hover,
+.footer_logo h2 a:active,
+.footer_logo h2 a:focus {
+  text-decoration: none ;
+  color: inherit ;
+}
+
 .footer_links {
     margin: 15px 0;
 }
