@@ -4,19 +4,37 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fitty. | 新規登録</title>
-    <link rel="stylesheet" href="../CSS/reset.css">
-    <link rel="stylesheet" href="../CSS/common.css">
+    <title>新規登録 | fitty.</title>
+        <link rel="stylesheet" href="../CSS/reset.css">
     <link rel="stylesheet" href="../CSS/login.css" />
 </head>
 
 <body>
-    <!-- headerここから -->
-  <header class="header">
-    <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
-    <div class="header_logo">
-    <h1><a href="./index.php">fitty.</a></h1>
+    <div class="login_container">
+        <h1>新規会員登録</h1>
+        <form action="register.php" method="POST">
+            <div class="form_group">
+                <label for="name">お名前</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form_group">
+                <label for="email">メールアドレス</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form_group">
+                <label for="password">パスワード</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form_group">
+                <label for="confirm_password">パスワード（確認）</label>
+                <input type="password" id="confirm_password" name="confirm_password" required />
+            </div>
+            <button type="submit">登録する</button>
+        </form>
+        <p><a href="./login.php">▶ すでにアカウントをお持ちの方はこちら</a></p>
     </div>
+<<<<<<< HEAD
+=======
     <nav class="header_nav"> 
       <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
       <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
@@ -84,6 +102,7 @@
   </footer>
   <!-- footer -->
      <script src="../JavaScript/hamburger.js"></script>
+>>>>>>> a826b6f497139443ab5d5d21dbc7b3c0b2c1f8c5
 </body>
 
 </html>

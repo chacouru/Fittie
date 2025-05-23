@@ -1,6 +1,6 @@
 @charset'UTF-8';
 /* styles.css */
-main {
+body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     display: flex;
@@ -72,4 +72,3 @@ a {
 a:hover {
     text-decoration: underline;
 }
-
