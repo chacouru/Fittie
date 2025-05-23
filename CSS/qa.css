@@ -1,5 +1,50 @@
 @charset 'UTF-8';
+body {
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
 
-h1{
-    text-align: center;
-}
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2rem;
+    }
+
+    .accordion {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .accordion_item {
+      background-color: #fff;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 15px 20px;
+      transition: all 0.3s ease;
+    }
+
+    .accordion_question {
+      cursor: pointer;
+      font-weight: bold;
+      margin: 0;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    .accordion_answer {
+      display: none;
+      margin-top: 10px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .accordion_item.active .accordion_answer {
+      display: block;
+    }
+
+    .accordion_item:hover {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
