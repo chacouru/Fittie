@@ -160,15 +160,15 @@ function isActive($currentTab, $tabName) {
 </div>
 
 <!-- footer -->
- <footer class="footer">
+  <footer class="footer">
     <div class="footer_container">
       <div class="footer_logo">
         <h2><a href="./index.php">fitty.</a></h2>
       </div>
       <div class="footer_links">
-        <a href="#">会社概要</a>
-        <a href="#">利用規約</a>
-        <a href="#">プライバシーポリシー</a>
+        <a href="./overview.php">会社概要</a>
+        <a href="./terms.php">利用規約</a>
+        <a href="./privacy.php">プライバシーポリシー</a>
       </div>
       <div class="footer_sns">
         <a href="#" aria-label="Twitter"><img src="icons/twitter.svg" alt="Twitter"></a>
@@ -176,11 +176,11 @@ function isActive($currentTab, $tabName) {
         <a href="#" aria-label="Facebook"><img src="icons/facebook.svg" alt="Facebook"></a>
       </div>
       <div class="footer_copy">
-        <small>&copy; 2025 Fitty All rights reserved.</small>
+        <small>&copy; 2025 fitty. All rights reserved.</small>
       </div>
     </div>
   </footer>
-    <!-- footer -->
+  <!-- footer -->
      <script src="../JavaScript/hamburger.js"></script>
 </body>
 
