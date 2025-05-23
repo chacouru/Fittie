@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- ホスト: 127.0.0.1
--- 生成日時: 2025-05-20 13:11:13
+-- 生成日時: 2025-05-23 15:11:51
 -- サーバのバージョン： 10.4.32-MariaDB
 -- PHP のバージョン: 8.2.12
 
@@ -20,6 +20,17 @@ SET time_zone = "+00:00";
 --
 -- データベース: `fitty`
 --
+
+-- --------------------------------------------------------
+
+--
+-- テーブルの構造 `brand`
+--
+
+CREATE TABLE `brand` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -44,6 +55,17 @@ CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- テーブルのデータのダンプ `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`) VALUES
+(1, 'トップス'),
+(2, 'ボトムス'),
+(3, 'バッグ'),
+(4, '帽子'),
+(5, 'アクセサリー');
 
 -- --------------------------------------------------------
 
@@ -90,6 +112,13 @@ CREATE TABLE `products` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- テーブルのデータのダンプ `products`
+--
+
+INSERT INTO `products` (`id`, `name`, `description`, `price`, `image`, `category_id`, `stock`, `created_at`) VALUES
+(1, 'ショルダーバッグ', '革製のいいカバン', 7000, NULL, 3, 20, '2025-05-23 14:53:36');
+
 -- --------------------------------------------------------
 
 --
@@ -101,12 +130,27 @@ CREATE TABLE `users` (
   `name` varchar(100) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
+  `created_at` datetime DEFAULT current_timestamp(),
+  `address` varchar(255) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- テーブルのデータのダンプ `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `created_at`, `address`, `phone`) VALUES
+(1, '呉井', 'k2fbl110987@gmail.com', 'test123', '2025-05-23 14:34:50', '新潟県秋葉区美幸町5-5-5', '080-5555-2222');
 
 --
 -- ダンプしたテーブルのインデックス
 --
+
+--
+-- テーブルのインデックス `brand`
+--
+ALTER TABLE `brand`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- テーブルのインデックス `cart_items`
@@ -156,6 +200,12 @@ ALTER TABLE `users`
 --
 
 --
+-- テーブルの AUTO_INCREMENT `brand`
+--
+ALTER TABLE `brand`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- テーブルの AUTO_INCREMENT `cart_items`
 --
 ALTER TABLE `cart_items`
@@ -165,7 +215,7 @@ ALTER TABLE `cart_items`
 -- テーブルの AUTO_INCREMENT `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- テーブルの AUTO_INCREMENT `orders`
@@ -183,13 +233,13 @@ ALTER TABLE `order_items`
 -- テーブルの AUTO_INCREMENT `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- テーブルの AUTO_INCREMENT `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- ダンプしたテーブルの制約
