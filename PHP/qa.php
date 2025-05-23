@@ -11,7 +11,6 @@
 <body>
 
 <main>
-<<<<<<< HEAD
   <!-- headerここから -->
     <header class="header"> <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
         <div class="header_logo">
@@ -52,74 +51,8 @@
     <p>A9. ログインページの「パスワードをお忘れの方」リンクから再設定手続きを行ってください。</p>
     <p>Q10. メールマガジンの配信を停止したいのですが。</p>
     <p>A10. マイページの「会員情報の変更」からメールマガジンの配信設定を変更いただけます。</p>
-=======
-  <h1>Q&A</h1>
->>>>>>> 448dc7d23faae32e9d43fe64e861e9676f9ec03d
 
-  <div class="accordion">
-    <div class="accordion_item">
-      <p class="accordion_question">Q1. サイズ選びに迷っています。どのように選べばよいですか？</p>
-      <div class="accordion_answer">
-        各商品ページにサイズガイドを掲載しております。また、商品によってはスタッフの着用コメントもございますので、そちらも参考にしてください。
-      </div>
-    </div>
-    <div class="accordion_item">
-      <p class="accordion_question">Q2. 商品の色味が写真と異なることはありますか？</p>
-      <div class="accordion_answer">
-        できるだけ実物に近い色味で掲載しておりますが、ご利用のモニターや照明環境により、実際の色と異なる場合がございます。予めご了承ください。
-      </div>
-    </div>
-    <div class="accordion_item">
-      <p class="accordion_question">Q3. 注文から発送までどのくらいかかりますか？</p>
-      <div class="accordion_answer">
-        通常、ご注文から2～3営業日以内に発送いたします。ただし、セール期間中やご注文が集中した場合は、発送までにお時間をいただくことがございます。
-      </div>
-    </div>
-    <div class="accordion_item">
-      <p class="accordion_question">Q4. 配送日時の指定はできますか？</p>
-      <div class="accordion_answer">
-        はい、ご注文時に配送日時の指定が可能です。ただし、一部地域や商品によってはご希望に添えない場合がございます。
-      </div>
-    </div>
-    <div class="accordion_item">
-      <p class="accordion_question">Q5. 利用できる支払い方法を教えてください。</p>
-      <div class="accordion_answer">
-        クレジットカード（VISA、MasterCard、JCB）、コンビニ決済、代金引換、銀行振込などをご利用いただけます。詳細は「お支払い方法」ページをご確認ください。
-      </div>
-    </div>
-    <div class="accordion_item">
-      <p class="accordion_question">Q6. 領収書の発行は可能ですか？</p>
-      <div class="accordion_answer">
-        はい、領収書の発行が可能です。ご注文時に「領収書希望」とご記入いただくか、お問い合わせフォームよりご連絡ください。
-      </div>
-    </div>
-    <div class="accordion_item">
-      <p class="accordion_question">Q7. 商品の返品や交換はできますか？</p>
-      <div class="accordion_answer">
-        商品到着後7日以内であれば、未使用・未開封の商品に限り返品・交換を承っております。詳細は「返品・交換について」ページをご確認ください。
-      </div>
-    </div>
-    <div class="accordion_item">
-      <p class="accordion_question">Q8. 不良品が届いた場合、どうすればよいですか？</p>
-      <div class="accordion_answer">
-        大変申し訳ございません。商品到着後7日以内にお問い合わせフォームよりご連絡ください。速やかに対応させていただきます。
-      </div>
-    </div>
-    <div class="accordion_item">
-      <p class="accordion_question">Q9. パスワードを忘れてしまいました。どうすればよいですか？</p>
-      <div class="accordion_answer">
-        ログインページの「パスワードをお忘れの方」リンクから再設定手続きを行ってください。
-      </div>
-    </div>
-    <div class="accordion_item">
-      <p class="accordion_question">Q10. メールマガジンの配信を停止したいのですが。</p>
-      <div class="accordion_answer">
-        マイページの「会員情報の変更」からメールマガジンの配信設定を変更いただけます。
-      </div>
-    </div>
-  </div>
 </main>
-<<<<<<< HEAD
   <!-- footer -->
   <footer class="footer">
     <div class="footer_container">
@@ -143,17 +76,5 @@
   </footer>
   <!-- footer -->
    <script src="../JavaScript/hamburger.js"></script>
-=======
-
-</main>
-<script>
-  document.querySelectorAll('.accordion_question').forEach(item => {
-    item.addEventListener('click', () => {
-      const parent = item.parentElement;
-      parent.classList.toggle('active');
-    });
-  });
-</script>
->>>>>>> 448dc7d23faae32e9d43fe64e861e9676f9ec03d
 </body>
 </html>
