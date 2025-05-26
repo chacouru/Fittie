@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../CSS/privacy.css">
 </head>
 <body>
-  <!-- headerここから -->
+   <!-- headerここから -->
   <header class="header">
     <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
     <div class="header_logo">
@@ -77,12 +77,13 @@
     
     <p id="end">以上</p>
   </main>
-  <!-- footer -->
-  <footer class="footer">
+<footer class="footer">
     <div class="footer_container">
-      <div class="footer_logo">
-        <h2><a href="./index.php">fitty.</a></h2>
-      </div>
+      <a href="index.php">
+        <div class="footer_logo">
+          <h2>fitty.</h2>
+        </div>
+      </a>
       <div class="footer_links">
         <a href="./overview.php">会社概要</a>
         <a href="./terms.php">利用規約</a>
@@ -94,7 +95,7 @@
         <a href="#" aria-label="Facebook"><img src="icons/facebook.svg" alt="Facebook"></a>
       </div>
       <div class="footer_copy">
-        <small>&copy; 2025 fitty. All rights reserved.</small>
+        <small>&copy; 2025 Fitty All rights reserved.</small>
       </div>
     </div>
   </footer>
