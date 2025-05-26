@@ -46,11 +46,51 @@ img {
   right: 40px;
   width: 120px;
   height: 180px;
-  border-radius: 60px / 90px; /* 縦長楕円 */
+  border-radius: 60px / 90px;
   box-shadow: 0 0 10px rgba(0,0,0,0.15);
   object-fit: cover;
   border: 3px solid #0078d7;
 }
 
+/* ===== レスポンシブ対応 ===== */
+@media screen and (max-width: 768px) {
+  main {
+    max-width: 90%;
+    padding: 20px;
+    padding-bottom: 200px; /* 画像のスペースを下に確保 */
+    padding-right: 20px;
+  }
 
+  #title {
+    font-size: 1.8rem;
+  }
 
+  p {
+    font-size: 1rem;
+  }
+
+  img {
+    position: static;
+    display: block;
+    margin: 20px auto 0;
+    width: 100px;
+    height: 150px;
+    border-radius: 50px / 75px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  #title {
+    font-size: 1.5rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+  }
+
+  img {
+    width: 90px;
+    height: 135px;
+    border-radius: 45px / 67.5px;
+  }
+}

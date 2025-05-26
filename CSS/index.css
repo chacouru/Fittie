@@ -1,12 +1,12 @@
 @charset 'UTF-8';
 
-/*スライドショーCSS*/
+/* ===== スライドショー ===== */
 #slideshow {
   position: relative;
   width: 810px;
   height: 540px;
   overflow: hidden;
-  margin: 0;
+  margin: 0 auto;
 }
 
 .slide {
@@ -26,14 +26,20 @@
   z-index: 1;
 }
 
-/*index.phpCSS*/
+/* ===== タイトル ===== */
 h1 {
   text-align: center;
+  font-size: 2rem;
+  margin: 20px 0;
 }
-#scroll_contents{
+
+/* ===== セクション共通 ===== */
+#scroll_contents {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 40px;
+  padding-bottom: 40px;
 }
 
 #history,
@@ -42,6 +48,7 @@ h1 {
   display: flex;
   flex-direction: row;
   width: 80%;
+  max-width: 1000px;
   height: 280px;
   overflow-x: auto;
   overflow-y: hidden;
@@ -49,12 +56,57 @@ h1 {
   padding: 10px;
   box-sizing: border-box;
   scroll-behavior: smooth;
+  gap: 20px;
 }
 
 .product_genre {
   width: 180px;
   height: 240px;
   background-color: aqua;
-  margin-right: 30px;
   flex-shrink: 0;
+  border-radius: 8px;
+}
+
+/* ===== レスポンシブ対応 ===== */
+@media screen and (max-width: 1024px) {
+  #slideshow {
+    width: 90%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+  }
+
+  #history,
+  #recommend,
+  #sale {
+    width: 90%;
+    height: auto;
+  }
+
+  .product_genre {
+    width: 160px;
+    height: 220px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  #slideshow {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+
+  .product_genre {
+    width: 140px;
+    height: 200px;
+  }
+
+  #history,
+  #recommend,
+  #sale {
+    gap: 15px;
+    padding: 10px 5px;
+  }
 }
