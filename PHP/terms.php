@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="../CSS/terms.css">
 </head>
 <body>
-<main>
   <!-- headerここから -->
   <header class="header">
     <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
@@ -33,7 +32,8 @@
     </nav>
   </div>
   <div class="header_space"></div>
-  <!-- headerここまで -->    
+  <!-- headerここまで -->
+<main>
     <h1 id="title">利用規約</h1>
     <p>株式会社fitty.（以下「当社」といいます）が運営するファッションECサイト「fitty.」（以下「本サイト」といいます）のご利用に際しての条件を、以下の通り定めます。本サイトをご利用になる前に、必ず本規約をお読みいただき、ご同意の上でご利用ください。</p>
     
@@ -92,12 +92,13 @@
     <h2>第12条（準拠法および管轄裁判所）</h2>
     <p>本規約の解釈および適用は日本法に準拠し、本サイト利用に関する紛争は東京地方裁判所を専属的合意管轄裁判所とします。</p>
 </main>
-      <!-- footer -->
-  <footer class="footer">
+<footer class="footer">
     <div class="footer_container">
-      <div class="footer_logo">
-        <h2><a href="./index.php">fitty.</a></h2>
-      </div>
+      <a href="index.php">
+        <div class="footer_logo">
+          <h2>fitty.</h2>
+        </div>
+      </a>
       <div class="footer_links">
         <a href="./overview.php">会社概要</a>
         <a href="./terms.php">利用規約</a>
@@ -109,7 +110,7 @@
         <a href="#" aria-label="Facebook"><img src="icons/facebook.svg" alt="Facebook"></a>
       </div>
       <div class="footer_copy">
-        <small>&copy; 2025 fitty. All rights reserved.</small>
+        <small>&copy; 2025 Fitty All rights reserved.</small>
       </div>
     </div>
   </footer>
