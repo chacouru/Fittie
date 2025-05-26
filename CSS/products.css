@@ -1,0 +1,156 @@
+@charset 'UTF-8';
+/* ベース設定 */
+main {
+  font-family: 'Helvetica Neue', sans-serif;
+  background-color: #ffffff;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* タイトル */
+#title {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 20px;
+  text-align: center;
+}
+
+#title h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #111;
+}
+
+/* 共通メインスタイル */
+main {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 商品一覧 */
+.product_list h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.products {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: flex-start;
+}
+
+.product_card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 240px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.product_card:hover {
+  transform: translateY(-4px);
+}
+
+.product_card img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.product_card h3 {
+  font-size: 18px;
+  margin: 10px 0 6px;
+  color: #222;
+}
+
+.product_card p {
+  font-size: 14px;
+  color: #666;
+}
+
+.product_card a {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #007acc;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.product_card a:hover {
+  background-color: #005f99;
+}
+
+/* 商品詳細ページ */
+.product_detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.product_detail .product_image {
+  flex: 1 1 40%;
+}
+
+.product_detail .product_image img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.product_detail .product_info {
+  flex: 1 1 50%;
+}
+
+.product_detail h2 {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.product_detail .price {
+  font-size: 22px;
+  color: #e60023;
+  margin-bottom: 16px;
+}
+
+.product_detail .description {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 24px;
+}
+
+.product_detail button {
+  background-color: #007acc;
+  color: #fff;
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.product_detail button:hover {
+  background-color: #005f99;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .product_detail {
+    flex-direction: column;
+  }
+
+  .products {
+    justify-content: center;
+  }
+}
