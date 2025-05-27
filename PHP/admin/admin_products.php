@@ -1,115 +1,77 @@
 <?php
-// エラー表示用
-$error = '';
-$success = '';
+require_once '../DbManager.php'; // パスはプロジェクト構成に合わせて変更してな
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // データ受け取り
-    $name = $_POST['name'] ?? '';
-    $description = $_POST['description'] ?? '';
-    $price = $_POST['price'] ?? '';
-    $stock = $_POST['stock'] ?? '';
-    $category = $_POST['category'] ?? '';
-    $image = $_FILES['image'] ?? null;
-
-    // バリデーション
-    if ($name === '' || $price === '' || $stock === '') {
-        $error = '商品名、価格、在庫数は必須です。';
-    } else {
-        // 画像の処理（仮）
-        $image_path = '';
-        if ($image && $image['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = 'uploads/';
-            $filename = basename($image['name']);
-            $target = $upload_dir . $filename;
-            if (move_uploaded_file($image['tmp_name'], $target)) {
-                $image_path = $target;
-            } else {
-                $error = '画像のアップロードに失敗しました。';
-            }
-        }
-
-        if ($error === '') {
-            // DB接続（仮）
-            $pdo = new PDO('mysql:host=localhost;dbname=ec_db;charset=utf8', 'root', '');
-            $stmt = $pdo->prepare("INSERT INTO products (name, description, price, stock, category, image_path)
-                                   VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$name, $description, $price, $stock, $category, $image_path]);
-            $success = '商品を登録しました！';
-        }
-    }
-}
+$db = getDb(); // DbManager を呼び出す
+$stmt = $db->query("SELECT id, name FROM brands ORDER BY name ASC");
+$brands = $stmt->fetchAll();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
-    <title>商品登録 - 管理者ページ</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background: #f9f9f9;
-            padding: 2rem;
-        }
-        form {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            width: 400px;
-            margin: auto;
-        }
-        input, textarea, select {
-            width: 100%;
-            margin-bottom: 1rem;
-            padding: 0.5rem;
-        }
-        button {
-            padding: 0.5rem 1rem;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-        }
-        .message {
-            text-align: center;
-            margin-bottom: 1rem;
-            color: red;
-        }
-        .success {
-            color: green;
-        }
-    </style>
+    <title>商品一括登録</title>
+    <link rel="stylesheet" href="../../CSS/reset.css">
+    <link rel="stylesheet" href="../../CSS/admin_products.css">
 </head>
+
 <body>
-    <form action="" method="post" enctype="multipart/form-data">
-        <h2>商品登録</h2>
+    <div class="container">
+        <h1>商品一括登録</h1>
 
-        <?php if ($error): ?>
-            <div class="message"><?= htmlspecialchars($error) ?></div>
-        <?php elseif ($success): ?>
-            <div class="message success"><?= htmlspecialchars($success) ?></div>
-        <?php endif; ?>
+        <h2>方法1 CSVアップロード</h2>
+        <form action="handle_csv_upload.php" method="post" enctype="multipart/form-data">
+            <label for="csv_file">CSVファイルを選択：</label>
+            <input type="file" name="csv_file" id="csv_file" accept=".csv" required>
+            <button type="submit">CSVを登録</button>
+            <p class="note">※ フォーマット: 商品名,説明,価格,カテゴリID,在庫,ブランドID,画像ファイル名<br>
+        例）<br>
+                Tシャツ,白色のTシャツ,1800,1,20,2,tshirt.jpg <br>
+                バッグ,レザーショルダー,8000,3,5,1,bag.jpg
+            </p>
 
-        <label>商品名 *</label>
-        <input type="text" name="name" required>
-
-        <label>商品説明</label>
-        <textarea name="description" rows="4"></textarea>
-
-        <label>価格（円） *</label>
-        <input type="number" name="price" required>
-
-        <label>在庫数 *</label>
-        <input type="number" name="stock" required>
-
-        <label>カテゴリ</label>
-        <input type="text" name="category">
-
-        <label>商品画像</label>
-        <input type="file" name="image" accept="image/*">
-
-        <button type="submit">登録する</button>
-    </form>
+        <h2>方法2 フォームで複数登録（最大5件）</h2>
+        <form action="handle_multiple_form.php" method="post">
+            <table>
+                <thead>
+                    <tr>
+                        <th>商品名</th>
+                        <th>説明</th>
+                        <th>価格</th>
+                        <th>カテゴリID</th>
+                        <th>在庫</th>
+                        <th>ブランド</th>
+                        <th>画像ファイル名</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php for ($i = 0; $i < 5; $i++): ?>
+                        <tr>
+                            <td><input type="text" name="products[<?= $i ?>][name]"></td>
+                            <td><input type="text" name="products[<?= $i ?>][description]"></td>
+                            <td><input type="number" name="products[<?= $i ?>][price]"></td>
+                            <td><input type="number" name="products[<?= $i ?>][category_id]"></td>
+                            <td><input type="number" name="products[<?= $i ?>][stock]"></td>
+                            <td>
+                                <select name="products[<?= $i ?>][brand_id]">
+                                    <option value="">選択してください</option>
+                                    <?php foreach ($brands as $brand): ?>
+                                        <option value="<?= htmlspecialchars($brand['id']) ?>">
+                                            <?= htmlspecialchars($brand['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </td>
+                            <td><input type="text" name="products[<?= $i ?>][image]" placeholder="例: bag1.jpg"></td>
+                        </tr>
+                    <?php endfor; ?>
+                </tbody>
+            </table>
+            <button type="submit">フォームから登録</button>
+        </form>
+    </div>
 </body>
+
 </html>

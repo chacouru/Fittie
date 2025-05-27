@@ -22,9 +22,11 @@ function getRecommendedProducts($userId = null, $limit = 10)
         $db = getDb();
         if ($userId) {
             // ユーザーの購入履歴に基づくおすすめ（簡易版）
-            $sql = "SELECT DISTINCT p.id, p.name, p.price, p.image, p.category_id, p.stock, c.name as category_name
+            $sql = "SELECT DISTINCT p.id, p.name, p.price, p.image, p.category_id, p.stock, 
+                           c.name as category_name, b.name as brand_name
                     FROM products p
                     LEFT JOIN categories c ON p.category_id = c.id
+                    LEFT JOIN brands b ON p.brand_id = b.id
                     WHERE p.stock > 0
                     AND p.category_id IN (
                         SELECT DISTINCT p2.category_id 
@@ -39,9 +41,11 @@ function getRecommendedProducts($userId = null, $limit = 10)
             $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
         } else {
             // ゲストユーザー向けの商品（在庫があるもの）
-            $sql = "SELECT p.id, p.name, p.price, p.image, p.category_id, p.stock, c.name as category_name
+            $sql = "SELECT p.id, p.name, p.price, p.image, p.category_id, p.stock, 
+                           c.name as category_name, b.name as brand_name
                     FROM products p
                     LEFT JOIN categories c ON p.category_id = c.id
+                    LEFT JOIN brands b ON p.brand_id = b.id
                     WHERE p.stock > 0
                     ORDER BY p.created_at DESC
                     LIMIT :limit";
@@ -62,9 +66,11 @@ function getSaleProducts($limit = 10)
         $db = getDb();
         // 現在のDB構造にはセール関連のカラムがないため、
         // 代替案として価格の安い順で商品を取得
-        $sql = "SELECT p.id, p.name, p.price, p.image, p.category_id, p.stock, c.name as category_name
+        $sql = "SELECT p.id, p.name, p.price, p.image, p.category_id, p.stock, 
+                       c.name as category_name, b.name as brand_name
                 FROM products p
                 LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN brands b ON p.brand_id = b.id
                 WHERE p.stock > 0
                 ORDER BY p.price ASC
                 LIMIT :limit";
@@ -82,9 +88,10 @@ function getLowestPriceProducts($limit = 5)
 {
     try {
         $db = getDb();
-        $sql = "SELECT p.*, c.name AS category_name
+        $sql = "SELECT p.*, c.name AS category_name, b.name as brand_name
                 FROM products p
                 LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN brands b ON p.brand_id = b.id
                 WHERE p.stock > 0 AND p.is_active = 1
                 ORDER BY p.price ASC
                 LIMIT :limit";
@@ -99,14 +106,12 @@ function getLowestPriceProducts($limit = 5)
 }
 $cheapProducts = getLowestPriceProducts();
 
-
-
 // ブランド情報を取得する関数（brandテーブルが存在するが空のため）
 function getBrands()
 {
     try {
         $db = getDb();
-        $sql = "SELECT id, name FROM brand ORDER BY name";
+        $sql = "SELECT id, name FROM brands ORDER BY name";
         $stmt = $db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -131,19 +136,27 @@ function formatPrice($price)
     return number_format($price) . '円';
 }
 
-// 画像パスを処理する関数
-function getImagePath($imagePath)
+// 画像パスを処理する関数（ブランド名対応版）
+function getImagePath($imagePath, $brandName = '')
 {
     if (empty($imagePath)) {
         return '../PHP/img/no-image.jpg';
     }
 
-    // 相対パスの場合は画像ディレクトリを追加
-    if (!str_starts_with($imagePath, 'http') && !str_starts_with($imagePath, '/') && !str_starts_with($imagePath, '../')) {
-        return '../PHP/img/products/' . $imagePath;
+    // 絶対パスやURLの場合はそのまま返す
+    if (str_starts_with($imagePath, 'http') || str_starts_with($imagePath, '/') || str_starts_with($imagePath, '../')) {
+        return $imagePath;
     }
 
-    return $imagePath;
+    // ブランド名が指定されている場合はブランドディレクトリを含める
+    if (!empty($brandName)) {
+        // ブランド名をURLセーフな形式に変換（必要に応じて）
+        $safeBrandName = str_replace([' ', '&', '/', '\\'], ['_', '_', '_', '_'], $brandName);
+        return '../PHP/img/products/' . $safeBrandName . '/' . $imagePath;
+    }
+
+    // ブランド名がない場合は従来通り
+    return '../PHP/img/products/' . $imagePath;
 }
 
 // 割引率を計算する関数
@@ -216,10 +229,11 @@ function calculateDiscountRate($originalPrice, $salePrice)
                     <?php foreach ($recentlyViewed as $product): ?>
                         <div class="product_genre">
                             <a href="./product_detail.php?id=<?php echo $product['id']; ?>">
-                                <img src="<?php echo htmlspecialchars($product['image'] ?? '../PHP/img/no-image.jpg'); ?>"
-                                    alt="<?php echo htmlspecialchars($product['name']); ?>">
+                                <img src="<?php echo htmlspecialchars(getImagePath($product['image'], $product['brand_name'] ?? '')); ?>"
+                                    alt="<?php echo htmlspecialchars($product['name']); ?>"
+                                    onerror="this.src='../PHP/img/no-image.jpg'">
                                 <div class="product_info">
-                                    <p class="product_brand"><?php echo htmlspecialchars($product['category_name'] ?? 'カテゴリなし'); ?></p>
+                                    <p class="product_brand"><?php echo htmlspecialchars($product['brand_name'] ?? $product['category_name'] ?? 'カテゴリなし'); ?></p>
                                     <p class="product_name"><?php echo htmlspecialchars($product['name']); ?></p>
                                     <p class="product_price"><?php echo formatPrice($product['price']); ?></p>
                                 </div>
@@ -235,11 +249,11 @@ function calculateDiscountRate($originalPrice, $salePrice)
                     <?php foreach ($recommendedProducts as $product): ?>
                         <div class="product_genre">
                             <a href="./product_detail.php?id=<?php echo $product['id']; ?>">
-                                <img src="<?php echo htmlspecialchars(getImagePath($product['image'])); ?>"
+                                <img src="<?php echo htmlspecialchars(getImagePath($product['image'], $product['brand_name'] ?? '')); ?>"
                                     alt="<?php echo htmlspecialchars($product['name']); ?>"
                                     onerror="this.src='../PHP/img/no-image.jpg'">
                                 <div class="product_info">
-                                    <p class="product_brand"><?php echo htmlspecialchars($product['category_name'] ?? 'カテゴリなし'); ?></p>
+                                    <p class="product_brand"><?php echo htmlspecialchars($product['brand_name'] ?? $product['category_name'] ?? 'カテゴリなし'); ?></p>
                                     <p class="product_name"><?php echo htmlspecialchars($product['name']); ?></p>
                                     <p class="product_price"><?php echo formatPrice($product['price']); ?></p>
                                     <p class="product_stock">在庫: <?php echo $product['stock'] ?? 0; ?>個</p>
@@ -258,11 +272,11 @@ function calculateDiscountRate($originalPrice, $salePrice)
                     <?php foreach ($saleProducts as $product): ?>
                         <div class="product_genre sale_item">
                             <a href="./product_detail.php?id=<?php echo $product['id']; ?>">
-                                <img src="<?php echo htmlspecialchars(getImagePath($product['image'])); ?>"
+                                <img src="<?php echo htmlspecialchars(getImagePath($product['image'], $product['brand_name'] ?? '')); ?>"
                                     alt="<?php echo htmlspecialchars($product['name']); ?>"
                                     onerror="this.src='../PHP/img/no-image.jpg'">
                                 <div class="product_info">
-                                    <p class="product_brand"><?php echo htmlspecialchars($product['category_name'] ?? 'カテゴリなし'); ?></p>
+                                    <p class="product_brand"><?php echo htmlspecialchars($product['brand_name'] ?? $product['category_name'] ?? 'カテゴリなし'); ?></p>
                                     <p class="product_name"><?php echo htmlspecialchars($product['name']); ?></p>
                                     <p class="product_price"><?php echo formatPrice($product['price']); ?></p>
                                     <p class="product_stock">在庫: <?php echo $product['stock'] ?? 0; ?>個</p>
