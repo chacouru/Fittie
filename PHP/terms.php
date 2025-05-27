@@ -13,7 +13,7 @@
   <header class="header">
     <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
     <div class="header_logo">
-      <h1><a href="./index.php">fitty.</a></h1>
+      <h1><a href="./toppage.php">fitty.</a></h1>
     </div>
     <nav class="header_nav"> 
       <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
