@@ -1,5 +1,9 @@
+<?php
+require_once __DIR__ . '/login_function/functions.php';
+$user_id = check_login(); // 未ログインの場合は login.php にリダイレクト
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
   <meta charset="UTF-8">
@@ -11,17 +15,19 @@
 </head>
 
 <body>
-   <!-- headerここから -->
+  <!-- headerここから -->
   <header class="header">
-    <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
+    <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
+      <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </button>
     <div class="header_logo">
       <h1><a href="./toppage.php">fitty.</a></h1>
     </div>
-    <nav class="header_nav"> 
-      <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
-      <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
-      <a href="./search.php" class="icon-search" title="検索">🔍</a> 
-      <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a> 
+    <nav class="header_nav">
+      <a href="./mypage.php" class="icon-user" title="マイページ">👤</a>
+      <a href="./cart.php" class="icon-cart" title="カート">🛒</a>
+      <a href="./search.php" class="icon-search" title="検索">🔍</a>
+      <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a>
     </nav>
   </header>
   <div class="backdrop" id="menuBackdrop"></div>
@@ -35,25 +41,25 @@
   </div>
   <div class="header_space"></div>
   <!-- headerここまで -->
-<main>
-          <div class="container">
-        <h1 class="cart_title" id="cart_title">カートに入っている商品：0点</h1>
-        
-        <div id="cart_items_container">
-            <!-- 商品アイテムがここに動的に表示されます -->
-        </div>
 
-        <div class="total_section">
-            <div class="total_label">合計（税込）</div>
-            <div class="total_price">¥3,456</div>
-        </div>
+  <main>
+    <div class="container">
+      <h1 class="cart_title" id="cart_title">カートに入っている商品：0点</h1>
 
-        <button class="checkout_btn">レジへ進む</button>
+      <div id="cart_items_container">
+        <!-- 商品アイテムがここに動的に表示されます -->
+      </div>
+
+      <div class="total_section">
+        <div class="total_label">合計（税込）</div>
+        <div class="total_price">¥3,456</div>
+      </div>
+
+      <button class="checkout_btn">レジへ進む</button>
     </div>
-</main>
+  </main>
 
-
- <footer class="footer">
+  <footer class="footer">
     <div class="footer_container">
       <a href="index.php">
         <div class="footer_logo">
@@ -75,10 +81,8 @@
       </div>
     </div>
   </footer>
-  <!-- footer -->
+
+  <script src=\"../JavaScript/hamburger.js\"></script>
+  <script src=\"../JavaScript/cart.js\"></script>
 </body>
-
-<script src="../JavaScript/hamburger.js"></script>
-<script src="../JavaScript/cart.js"></script>
-
 </html>

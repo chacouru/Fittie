@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/login_function/functions.php';
+$user_id = check_login(); // 未ログインの場合は login.php にリダイレクト
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +18,7 @@
   <header class="header">
     <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
     <div class="header_logo">
-      <h1><a href="./toppage.php">fitty.</a></h1>
+      <h1><a href="./index.php">fitty.</a></h1>
     </div>
     <nav class="header_nav"> 
       <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
@@ -37,7 +41,7 @@
 
 <?php
 // セッション開始
-session_start();
+// session_start();
 
 // ログインチェック（この例ではログイン済みと仮定）
 // 実際の実装では、ここでログイン状態をチェックし、未ログインならログインページにリダイレクトする

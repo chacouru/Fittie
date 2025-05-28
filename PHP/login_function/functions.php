@@ -21,3 +21,22 @@ function get_user_by_remember_token($token) {
     $stmt->execute([hash('sha256', $token)]);
     return $stmt->fetchColumn();
 }
+
+function check_login() {
+    session_start();
+
+    if (isset($_SESSION['user_id'])) {
+        return $_SESSION['user_id'];
+    }
+
+    if (isset($_COOKIE['remember_me'])) {
+        $user_id = get_user_by_remember_token($_COOKIE['remember_me']);
+        if ($user_id) {
+            $_SESSION['user_id'] = $user_id;
+            return $user_id;
+        }
+    }
+
+    header('Location: ./login.php');
+    exit;
+}

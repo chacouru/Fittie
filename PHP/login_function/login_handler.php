@@ -20,7 +20,7 @@ if ($user && password_verify($password, $user['password'])) {
         setcookie('remember_me', $token, time() + (86400 * 30), '/', '', true, true);
     }
 
-    header("Location: ../toppage.php");
+    header("Location: ../index.php");
     exit;
 } else {
     echo "ログイン失敗";

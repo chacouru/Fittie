@@ -11,5 +11,5 @@ $pdo = db_connect();
 $stmt = $pdo->prepare("INSERT INTO users (name, email, password, address, phone) VALUES (?, ?, ?, ?, ?)");
 $stmt->execute([$name, $email, $password, $address, $phone]);
 
-header("Location: toppage.php");
+header("Location: ../index.php");
 exit;
