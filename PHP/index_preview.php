@@ -97,44 +97,30 @@ $pageKeywords = "フィットネス,スポーツ用品,通販,トレーニング
 </head>
 
 <body>
-    <!-- headerここから -->
-    <header class="header">
-        <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
-            <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-        </button>
-        <div class="header_logo">
-            <h1><a href="./index.php">fitty.</a></h1>
-        </div>
-        <nav class="header_nav">
-            <a href="./mypage.php" class="icon-user" title="マイページ" aria-label="マイページ">👤</a>
-            <a href="./cart.php" class="icon-cart" title="カート" aria-label="カート">🛒</a>
-            <a href="./search.php" class="icon-search" title="検索" aria-label="検索">🔍</a>
-            <a href="./contact.php" class="icon-contact" title="お問い合わせ" aria-label="お問い合わせ">✉️</a>
-        </nav>
-    </header>
-    <div class="backdrop" id="menuBackdrop"></div>
-    <div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
-        <nav>
-            <?php if ($brands->success && !empty($brands->data)): ?>
-                <?php foreach ($brands->data as $brand): ?>
-                    <a href="./search.php?brand=<?php echo e($brand['id']); ?>" 
-                       role="menuitem" 
-                       class="brand"
-                       title="<?php echo e($brand['name']); ?>の商品を見る">
-                        <?php echo e($brand['name']); ?>
-                    </a>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <!-- フォールバック用のサンプルブランド -->
-                <a href="./search.php" role="menuitem" class="brand brand1">すべての商品</a>
-                <a href="./search.php?category=1" role="menuitem" class="brand brand2">フィットネス</a>
-                <a href="./search.php?category=2" role="menuitem" class="brand brand3">スポーツウェア</a>
-                <a href="./search.php?category=3" role="menuitem" class="brand brand4">アクセサリー</a>
-            <?php endif; ?>
-        </nav>
+       <!-- headerここから -->
+  <header class="header">
+    <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu"> <span class="bar"></span><span class="bar"></span><span class="bar"></span> </button>
+    <div class="header_logo">
+      <h1><a href="./toppage.php">fitty.</a></h1>
     </div>
-    <div class="header_space"></div>
-    <!-- headerここまで -->
+    <nav class="header_nav"> 
+      <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
+      <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
+      <a href="./search.php" class="icon-search" title="検索">🔍</a> 
+      <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a> 
+    </nav>
+  </header>
+  <div class="backdrop" id="menuBackdrop"></div>
+  <div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
+    <nav>
+      <a href="#" role="menuitem" class="bland brand1">ブランドA</a>
+      <a href="#" role="menuitem" class="bland brand2">ブランドB</a>
+      <a href="#" role="menuitem" class="bland brand3">ブランドC</a>
+      <a href="#" role="menuitem" class="bland brand4">ブランドD</a>
+    </nav>
+  </div>
+  <div class="header_space"></div>
+  <!-- headerここまで -->
 
     <main>
         <!-- ローディング表示 -->
