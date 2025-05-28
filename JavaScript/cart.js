@@ -1,99 +1,88 @@
-'usestrict';
-       // カートデータの例（実際の実装では外部APIやローカルストレージから取得）
-        const cartItems = [
-            {
-                id: 1,
-                brand: "Nike",
-                name: "エアマックス",
-                size: "26.5cm",
-                price: 12800,
-                quantity: 1,
-                image: ""
-            },
-            {
-                id: 2,
-                brand: "Adidas",
-                name: "スタンスミス",
-                size: "27.0cm", 
-                price: 9800,
-                quantity: 2,
-                image: ""
-            },
-            {
-                id: 3,
-                brand: "Converse",
-                name: "オールスター",
-                size: "26.0cm",
-                price: 6800,
-                quantity: 1,
-                image: ""
-            }
-        ];
+'use strict';
 
-        // ページ読み込み時にカートを表示
-        window.addEventListener('DOMContentLoaded', function() {
-            renderCartItems();
-            updateCartTitle();
-            updateTotal();
-        });
+window.addEventListener('DOMContentLoaded', async function () {
+    const container = document.getElementById('cart_items_container');
+    const cartTitle = document.getElementById('cart_title');
+    const totalPrice = document.querySelector('.total_price');
+    let cartItems = [];
 
-        // カートアイテムを表示する関数
-        function renderCartItems() {
-            const container = document.getElementById('cart-items-container');
-            container.innerHTML = '';
+    try {
+        const res = await fetch('../PHP/get_cart_items.php');
+        cartItems = await res.json();
 
-            cartItems.forEach(item => {
-                const cartItemHTML = `
-                    <div class="cart_item">
-                        <div class="item_image"></div>
-                        <div class="item_details">
-                            <div class="item_brand">${item.brand}</div>
-                            <div class="item_name">${item.name}</div>
-                            <div class="item_size">${item.size}</div>
-                            <div class="item_price">¥${item.price.toLocaleString()}</div>
-                            <div class="quantity_controls">
-                                <span class="quantity_label">数量</span>
-                                <button class="quantity_btn" onclick="decreaseQuantity(${item.id})">-</button>
-                                <input type="number" class="quantity-input" value="${item.quantity}" id="qty${item.id}" readonly>
-                                <button class="quantity_btn" onclick="increaseQuantity(${item.id})">+</button>
-                            </div>
+        renderCartItems();
+        updateCartTitle();
+        updateTotal();
+    } catch (err) {
+        container.innerHTML = '<p>カートの読み込みに失敗しました。</p>';
+        console.error(err);
+    }
+
+    function renderCartItems() {
+        container.innerHTML = '';
+        cartItems.forEach(item => {
+            const cartItemHTML = `
+                <div class="cart_item">
+                    <div class="item_image"><img src="../img/products/${item.brand_name}/${item.image}" alt="${item.name}">
+                    </div>
+                    <div class="item_details">
+                        <div class="item_name">${item.name}</div>
+                        <div class="item_price">¥${item.price.toLocaleString()}</div>
+                        <div class="quantity_controls">
+                            <span class="quantity_label">数量</span>
+                            <button class="quantity_btn" data-id="${item.id}" data-action="decrease">-</button>
+                            <input type="number" class="quantity-input" value="${item.quantity}" id="qty${item.id}" readonly>
+                            <button class="quantity_btn" data-id="${item.id}" data-action="increase">+</button>
                         </div>
                     </div>
-                `;
-                container.innerHTML += cartItemHTML;
+                </div>
+            `;
+            container.innerHTML += cartItemHTML;
+        });
+
+        // 数量ボタンにイベントを追加
+        document.querySelectorAll('.quantity_btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const id = parseInt(this.getAttribute('data-id'));
+                const action = this.getAttribute('data-action');
+                if (action === 'increase') {
+                    increaseQuantity(id);
+                } else {
+                    decreaseQuantity(id);
+                }
             });
-        }
+        });
+    }
 
-        // カートタイトルを更新
-        function updateCartTitle() {
-            const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cart_title').textContent = `カートに入っている商品：${totalItems}点`;
-        }
+    function updateCartTitle() {
+        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        cartTitle.textContent = `カートに入っている商品：${totalItems}点`;
+    }
 
-        // 合計金額を更新
-        function updateTotal() {
-            const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            document.querySelector('.total_price').textContent = `¥${total.toLocaleString()}`;
-        }
+    function updateTotal() {
+        const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        totalPrice.textContent = `¥${total.toLocaleString()}`;
+    }
 
-        // 数量を増やす
-        function increaseQuantity(itemId) {
-            const item = cartItems.find(item => item.id === itemId);
-            if (item) {
-                item.quantity++;
-                document.getElementById('qty' + itemId).value = item.quantity;
-                updateCartTitle();
-                updateTotal();
-            }
+    function increaseQuantity(itemId) {
+        const item = cartItems.find(item => item.id === itemId);
+        if (item) {
+            item.quantity++;
+            document.getElementById('qty' + itemId).value = item.quantity;
+            updateCartTitle();
+            updateTotal();
+            // TODO: 数量変更をサーバーに送信するならここでfetch POST
         }
+    }
 
-        // 数量を減らす
-        function decreaseQuantity(itemId) {
-            const item = cartItems.find(item => item.id === itemId);
-            if (item && item.quantity > 1) {
-                item.quantity--;
-                document.getElementById('qty' + itemId).value = item.quantity;
-                updateCartTitle();
-                updateTotal();
-            }
+    function decreaseQuantity(itemId) {
+        const item = cartItems.find(item => item.id === itemId);
+        if (item && item.quantity > 1) {
+            item.quantity--;
+            document.getElementById('qty' + itemId).value = item.quantity;
+            updateCartTitle();
+            updateTotal();
+            // TODO: 数量変更をサーバーに送信するならここでfetch POST
         }
+    }
+});
