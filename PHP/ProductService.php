@@ -2,6 +2,8 @@
 require_once './DbManager.php';
 require_once './config.php';
 
+
+
 /**
  * 商品関連のサービスクラス
  */
@@ -17,6 +19,38 @@ class ProductService {
             throw new ProductException("データベース接続に失敗しました");
         }
     }
+
+    /**
+ * 人気商品を取得（作成日時ベース - 簡易版）
+ */
+public function getPopularProducts(int $limit = 10): ApiResponse {
+    try {
+        // 新着商品を人気商品として扱う簡易実装
+        $sql = "SELECT p.id, p.name, p.price, p.image, p.category_id, p.stock, 
+                       c.name as category_name, b.name as brand_name, p.created_at
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN brands b ON p.brand_id = b.id
+                WHERE p.stock > 0 AND p.is_active = 1
+                ORDER BY p.created_at DESC, p.id DESC
+                LIMIT :limit";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return new ApiResponse(true, $products);
+        
+    } catch (PDOException $e) {
+        error_log("人気商品の取得エラー: " . $e->getMessage());
+        return new ApiResponse(false, [], "人気商品の読み込みに失敗しました");
+    } catch (Exception $e) {
+        error_log("予期しないエラー（人気商品）: " . $e->getMessage());        return new ApiResponse(false, [], "システムエラーが発生しました");
+    }
+}
+
+    
     
     /**
      * 最近見た商品を取得（セッションベース実装）
@@ -261,4 +295,6 @@ class ProductService {
     public function clearCache(): void {
         $this->cache = [];
     }
+    
+    
 }
