@@ -23,5 +23,9 @@ if ($user && password_verify($password, $user['password'])) {
     header("Location: ../index.php");
     exit;
 } else {
-    echo "ログイン失敗";
+     echo '<script>
+        alert("ログインに失敗しました。メールアドレスまたはパスワードが間違っています。");
+        window.location.href = "../login.php";
+    </script>';
+    exit;
 }
