@@ -39,4 +39,17 @@ function check_login() {
 
     header('Location: ./login.php');
     exit;
-}
+}?>
+<?php
+// functions.php
+// session_start();
+
+// function check_login() {
+//     if (!isset($_SESSION['user_id'])) {
+//         header('Location: login.php');
+//         exit;
+//     }
+//     return $_SESSION['user_id'];
+// }
+// ?>
+

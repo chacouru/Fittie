@@ -2,15 +2,11 @@
 <?php
 require_once __DIR__ . '/login_function/session.php';
 
-if (isset($_SESSION['user_id'])) {
-    echo "ログイン中：ユーザーID " . $_SESSION['user_id'];
-} else {
-    echo '<a href="login.php">ログイン</a> または <a href="register.php">登録</a>';
-}?>
+?>
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fitty.|トップページ</title>
@@ -26,7 +22,12 @@ if (isset($_SESSION['user_id'])) {
     <div class="header_logo">
       <h1><a href="./index.php">fitty.</a></h1>
     </div>
-    <nav class="header_nav"> 
+    <nav class="header_nav"> <?php
+    if (isset($_SESSION['user_id'])) {
+        echo "ログイン中";
+    } else {
+        echo '<a href="login.php">🚪</a>';
+    }?>
       <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
       <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
       <a href="./search.php" class="icon-search" title="検索">🔍</a> 
