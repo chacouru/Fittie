@@ -4,6 +4,7 @@ require_once './DbManager.php';
 require_once './Encode.php';
 require_once './ProductService.php';
 require_once './config.php';
+require_once __DIR__ . '/cart_button.php';
 
 // エラーハンドリング用のカスタム例外クラス
 class ProductException extends Exception {}

@@ -1,6 +1,10 @@
 <?php
 // cart_button.php - カートボタンコンポーネント
 
+// 必要なファイルを読み込み
+require_once __DIR__ . '/DbManager.php';
+require_once __DIR__ . '/Encode.php';
+
 // セッションが開始されていない場合は開始
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -26,9 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $quantity = intval($_POST['quantity']) ?: 1;
     
     try {
-        // データベース接続（適切な接続情報に変更してください）
-        $pdo = new PDO('mysql:host=localhost;dbname=fitty;charset=utf8mb4', 'username', 'password');
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        // データベース接続
+        $pdo = getDb();
         
         // 商品の在庫チェック
         $stmt = $pdo->prepare("SELECT stock, name FROM products WHERE id = ? AND is_active = 1");
@@ -102,7 +105,7 @@ function displayCartButton($product_id, $product_name, $stock, $price) {
         <button 
             class="cart-button ' . $button_class . '" 
             data-product-id="' . $product_id . '"
-            data-product-name="' . htmlspecialchars($product_name) . '"
+            data-product-name="' . e($product_name) . '"
             data-price="' . $price . '"
             ' . $disabled . '
             ' . (!$is_logged_in ? 'data-login-required="true"' : '') . '
@@ -132,141 +135,6 @@ function generateQuantityOptions($stock, $max = 10) {
 }
 ?>
 
-<style>
-.cart-section {
-    margin: 20px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.quantity-selector {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.quantity-selector label {
-    font-weight: 500;
-    color: #333;
-}
-
-.quantity-select {
-    padding: 8px 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 6px;
-    background: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: border-color 0.3s ease;
-}
-
-.quantity-select:focus {
-    outline: none;
-    border-color: #007bff;
-}
-
-.cart-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.cart-btn-active {
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
-}
-
-.cart-btn-active:hover {
-    background: linear-gradient(135deg, #0056b3, #004085);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-}
-
-.cart-btn-disabled {
-    background: #6c757d;
-    color: #fff;
-    cursor: not-allowed;
-}
-
-.cart-icon {
-    width: 20px;
-    height: 20px;
-    stroke-width: 2;
-}
-
-.button-text {
-    transition: all 0.3s ease;
-}
-
-.cart-button.loading .button-text {
-    opacity: 0.7;
-}
-
-.cart-button.loading::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: spin 1s ease-in-out infinite;
-    right: 15px;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.cart-message {
-    padding: 12px;
-    border-radius: 6px;
-    font-weight: 500;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-.cart-message.success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.cart-message.error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f1b0b7;
-}
-
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    .cart-section {
-        margin: 15px 0;
-    }
-    
-    .cart-button {
-        padding: 12px 20px;
-        font-size: 14px;
-    }
-    
-    .quantity-selector {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-}
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -362,5 +230,6 @@ function updateCartCount(count) {
 
 <?php
 // 使用例：商品詳細ページや商品一覧ページで使用
+// require_once 'cart_button.php';
 // displayCartButton($product['id'], $product['name'], $product['stock'], $product['price']);
 ?>
