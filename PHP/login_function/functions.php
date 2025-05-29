@@ -1,6 +1,6 @@
 <?php
 function db_connect() {
-    return new PDO('mysql:host=localhost;dbname=fitty', 'root', '', [
+    return new PDO('mysql:host=localhost;dbname=fitty;charset=utf8mb4', 'root', '', [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
 }
@@ -40,16 +40,3 @@ function check_login() {
     header('Location: ./login.php');
     exit;
 }?>
-<?php
-// functions.php
-// session_start();
-
-// function check_login() {
-//     if (!isset($_SESSION['user_id'])) {
-//         header('Location: login.php');
-//         exit;
-//     }
-//     return $_SESSION['user_id'];
-// }
-// ?>
-
