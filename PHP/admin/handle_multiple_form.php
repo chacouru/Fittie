@@ -15,11 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['products'])) {
         $stock = $product['stock'];
         $is_on_sale = isset($product['is_on_sale']) ? 1 : 0;
         $sale_price = $product['sale_price'] ?? null;
+        $image = $product['image'] ?? null;
+        $brand_id = $product['brand_id'] ?? null;
+        $is_active = isset($product['is_active']) ? (int)$product['is_active'] : 1;
 
         $stmt = $pdo->prepare("INSERT INTO products 
-            (name, description, price, category_id, stock, is_on_sale, sale_price) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$name, $description, $price, $category_id, $stock, $is_on_sale, $sale_price]);
+            (name, description, price, image, category_id, stock, brand_id, is_on_sale, sale_price, is_active) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$name, $description, $price, $image, $category_id, $stock, $brand_id, $is_on_sale, $sale_price, $is_active]);
         $count++;
     }
 
