@@ -7,23 +7,40 @@ window.addEventListener('DOMContentLoaded', async function () {
     let cartItems = [];
 
     try {
-        const res = await fetch('../PHP/get_cart_items.php');
+        // パスを修正：cart_preview.phpから見た正しい相対パス
+        const res = await fetch('./api/get_cart_items.php');
+        
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
         cartItems = await res.json();
+        console.log('Cart items loaded:', cartItems); // デバッグ用
 
         renderCartItems();
         updateCartTitle();
         updateTotal();
     } catch (err) {
         container.innerHTML = '<p>カートの読み込みに失敗しました。</p>';
-        console.error(err);
+        console.error('Cart loading error:', err);
     }
 
     function renderCartItems() {
         container.innerHTML = '';
+        
+        if (cartItems.length === 0) {
+            container.innerHTML = '<p>カートに商品がありません。</p>';
+            return;
+        }
+        
         cartItems.forEach(item => {
+            // デバッグ用：画像パスをコンソールに出力
+            const imagePath = `../PHP/img/products/${item.brand_name}/${item.image}`;
+            console.log('Image path:', imagePath);
+            
             const cartItemHTML = `
                 <div class="cart_item">
-                    <div class="item_image"><img src="../img/products/${item.brand_name}/${item.image}" alt="${item.name}">
+                    <div class="item_image"><img src="${imagePath}" alt="${item.name}" onerror="this.src='../img/products/default.jpg'; console.log('Image failed to load:', this.src);">
                     </div>
                     <div class="item_details">
                         <div class="item_name">${item.name}</div>
