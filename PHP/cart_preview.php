@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/login_function/functions.php';
-$user_id = check_login(); // 未ログインの場合は login.php にリダイレクト
+// require_once __DIR__ . '/login_function/functions.php';
+// $user_id = check_login(); // 未ログインの場合は login.php にリダイレクト
 ?>
 <!DOCTYPE html>
 <html lang="ja">
