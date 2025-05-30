@@ -42,6 +42,7 @@ $brands = $stmt->fetchAll();
                 Tシャツ,白色のTシャツ,1800,1,20,2,tshirt.jpg <br>
                 バッグ,レザーショルダー,8000,3,5,1,bag.jpg
             </p>
+            </form>
 
             <h2>方法2 フォームで複数登録（最大5件）</h2>
             <form action="handle_multiple_form.php" method="post">
