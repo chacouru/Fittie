@@ -23,6 +23,7 @@ if (isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fitty. | 新規登録</title>
     <link rel="stylesheet" href="../CSS/register.css">
+    <link rel="stylesheet" href="../CSS/common.css">
 </head>
 <body>
     <header class="header">
@@ -60,18 +61,36 @@ if (isset($_SESSION['user_id'])) {
   </nav>
 </div>
 <?php endif; ?>
-
-<div class="header_space"></div>
-    <main>
-        <h2>新規登録</h2>
-        <form method="POST" action="login_function/register_handler.php">
-            <input type="text" name="name" required placeholder="名前">
-            <input type="email" name="email" required placeholder="メール">
-            <input type="password" name="password" required placeholder="パスワード">
-            <input type="text" name="address" placeholder="住所">
-            <input type="text" name="phone" placeholder="電話番号">
-            <button type="submit">登録</button>
-        </form>
-    </main>
+    <div id="conteiner">
+      <main>
+          <h2>新規登録</h2>
+          <form method="POST" action="login_function/register_handler.php">
+              <input type="text" name="name" required placeholder="名前">
+              <input type="email" name="email" required placeholder="メール">
+              <input type="password" name="password" required placeholder="パスワード">
+              <input type="text" name="address" placeholder="住所">
+              <input type="text" name="phone" placeholder="電話番号">
+              <button type="submit" id="submit">登録</button>
+          </form>
+      </main>
+    </div>
+          <footer class="footer">
+      <div class="footer_container">
+          <a href="index.php"><div class="footer_logo"><h2>fitty.</h2></div></a>
+          <div class="footer_links">
+              <a href="./overview.php">会社概要</a>
+              <a href="./terms.php">利用規約</a>
+              <a href="./privacy.php">プライバシーポリシー</a>
+          </div>
+          <div class="footer_sns">
+              <a href="#"><img src="icons/twitter.svg" alt="Twitter"></a>
+              <a href="#"><img src="icons/instagram.svg" alt="Instagram"></a>
+              <a href="#"><img src="icons/facebook.svg" alt="Facebook"></a>
+          </div>
+          <div class="footer_copy">
+              <small>&copy; 2025 Fitty All rights reserved.</small>
+          </div>
+    </footer>
+    <script src="../JavaScript/hamburger.js"></script>
 </body>
 </html>
