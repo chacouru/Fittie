@@ -11,7 +11,7 @@ if ($user_id) {
     $stmt = $pdo->prepare("
         SELECT b.id, b.name 
         FROM favorite_brands fb
-        JOIN brand b ON fb.brand_id = b.id
+        JOIN brands b ON fb.brand_id = b.id
         WHERE fb.user_id = ?
     ");
     $stmt->execute([$user_id]);
@@ -33,7 +33,7 @@ $all_brands = [];
 $user_brands = [];
 
 if ($user_id) {
-    $stmt = $pdo->query("SELECT * FROM brand");
+    $stmt = $pdo->query("SELECT * FROM brands");
     $all_brands = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $stmt = $pdo->prepare("SELECT brand_id FROM favorite_brands WHERE user_id = :id");
