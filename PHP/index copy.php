@@ -70,13 +70,18 @@ $brands = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 商品カード表示用の関数
 function displayProductCard($product) {
-    // 画像パスの生成（ブランド名入り）
-    $brand_dir = !empty($product['brand_name']) ? $product['brand_name'] : 'no-brand';
-    $image_file = !empty($product['image']) ? $product['image'] : 'no-image.jpg';
+    $brand_dir = $product['brand_name'] ?? 'no-brand';
+$image_file = $product['image'] ?? 'no-image.jpg';
 
-    // 画像パス（ブランド名のフォルダ名には空白などを避けるための対処）
-    $safe_brand_dir = preg_replace('/[^\w\-]/u', '_', $brand_dir); // 空白・記号を「_」に変換
-    $image_path = "../PHP/img/products/{$safe_brand_dir}/{$image_file}";
+// フォルダ名変換（半角英数字と _ のみに）
+$safe_brand_dir = preg_replace('/[^\w\-]/u', '_', $brand_dir);
+
+// 実際の画像パスを作成
+$image_path = "../PHP/img/products/{$safe_brand_dir}/{$image_file}";
+
+// デバッグ表示
+// echo "<p>{$image_path}</p>";
+
 
     $brand_name = $product['brand_name'] ?? 'ブランド不明';
     $category_name = $product['category_name'] ?? 'カテゴリ不明';
