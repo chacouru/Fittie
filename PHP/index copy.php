@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/login_function/session.php';
+require_once 'cart_button.php'; // カートボタン用の関数を読み込み
 
 // データベース接続設定
 $host = 'localhost';
@@ -69,7 +70,14 @@ $brands = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 商品カード表示用の関数
 function displayProductCard($product) {
-    $image_path = !empty($product['image']) ? "../PHP/img/" . $product['image'] : "../PHP/img/no-image.jpg";
+    // 画像パスの生成（ブランド名入り）
+    $brand_dir = !empty($product['brand_name']) ? $product['brand_name'] : 'no-brand';
+    $image_file = !empty($product['image']) ? $product['image'] : 'no-image.jpg';
+
+    // 画像パス（ブランド名のフォルダ名には空白などを避けるための対処）
+    $safe_brand_dir = preg_replace('/[^\w\-]/u', '_', $brand_dir); // 空白・記号を「_」に変換
+    $image_path = "../PHP/img/products/{$safe_brand_dir}/{$image_file}";
+
     $brand_name = $product['brand_name'] ?? 'ブランド不明';
     $category_name = $product['category_name'] ?? 'カテゴリ不明';
     
@@ -81,7 +89,7 @@ function displayProductCard($product) {
         $discount_rate = round((($product['price'] - $product['sale_price']) / $product['price']) * 100);
         $sale_info = "<span class='original-price'>¥" . number_format($product['price']) . "</span><span class='sale-badge'>{$discount_rate}%OFF</span>";
     }
-    
+
     // レーティング表示
     $rating_stars = '';
     if ($product['rating'] > 0) {
@@ -96,9 +104,9 @@ function displayProductCard($product) {
         }
         $rating_stars .= " ({$product['rating']}) ({$product['review_count']}件)";
     }
-    
+
     echo "<div class='product-card' data-product-id='{$product['id']}'>";
-    echo "<div class='product-image'>";
+    echo "<div class='product-image' onclick=\"window.location.href='./product_detail.php?id={$product['id']}'\">";
     echo "<img src='{$image_path}' alt='{$product['name']}' onerror=\"this.src='../PHP/img/no-image.jpg'\">";
     if ($product['is_on_sale']) {
         echo "<div class='sale-label'>SALE</div>";
@@ -106,7 +114,7 @@ function displayProductCard($product) {
     echo "</div>";
     echo "<div class='product-info'>";
     echo "<div class='product-brand'>{$brand_name}</div>";
-    echo "<div class='product-name'>{$product['name']}</div>";
+    echo "<div class='product-name' onclick=\"window.location.href='./product_detail.php?id={$product['id']}'\">{$product['name']}</div>";
     echo "<div class='product-category'>{$category_name}</div>";
     if ($rating_stars) {
         echo "<div class='product-rating'>{$rating_stars}</div>";
@@ -116,9 +124,14 @@ function displayProductCard($product) {
     echo $sale_info;
     echo "</div>";
     echo "<div class='product-stock'>在庫: {$product['stock']}個</div>";
+
+    // カートボタンを表示
+    displayCartButton($product['id'], $product['name'], $product['stock'], $display_price, false);
+    
     echo "</div>";
     echo "</div>";
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -129,6 +142,7 @@ function displayProductCard($product) {
     <link rel="stylesheet" href="../CSS/reset.css">
     <link rel="stylesheet" href="../CSS/common.css">
     <link rel="stylesheet" href="../CSS/index.css">
+    <?php echo getCartButtonCSS(); ?>
     <style>
         /* スライドショー用のスタイル */
         #slideshow {
@@ -309,7 +323,6 @@ function displayProductCard($product) {
             border-radius: 8px;
             overflow: hidden;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
             background: white;
             height: 100%;
             display: flex;
@@ -325,6 +338,7 @@ function displayProductCard($product) {
             position: relative;
             height: 200px;
             overflow: hidden;
+            cursor: pointer;
         }
         
         .product-image img {
@@ -363,6 +377,11 @@ function displayProductCard($product) {
             font-weight: bold;
             margin-bottom: 5px;
             color: #333;
+            cursor: pointer;
+        }
+        
+        .product-name:hover {
+            color: #007bff;
         }
         
         .product-category {
@@ -406,7 +425,17 @@ function displayProductCard($product) {
         .product-stock {
             font-size: 12px;
             color: #666;
+            margin-bottom: 10px;
+        }
+        
+        /* 商品カード内のカートボタンスタイル調整 */
+        .product-card .cart-button-container {
             margin-top: auto;
+        }
+        
+        .product-card .cart-btn {
+            width: 100%;
+            justify-content: center;
         }
         
         #history, #recommend, #sale {
@@ -575,22 +604,8 @@ function displayProductCard($product) {
     </footer>
 
     <script src="../JavaScript/hamburger.js"></script>
+    <?php echo getCartButtonJS(); ?>
     <script>
-        // 商品カードクリック時の処理
-        document.addEventListener('DOMContentLoaded', function() {
-            const productCards = document.querySelectorAll('.product-card');
-            
-            productCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    const productId = this.dataset.productId;
-                    if (productId) {
-                        // 商品詳細ページに遷移
-                        window.location.href = `./product_detail.php?id=${productId}`;
-                    }
-                });
-            });
-        });
-
         // スライドショーの制御
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
