@@ -3,8 +3,8 @@
  * 目的：ログインユーザーのカート情報をDBから取得してJSONで返すAPI。
  * フロントエンドのJS（cart.jsなど）がこのPHPを fetch() して、JSONを受け取って表示する。 
  */
-require_once __DIR__ . '/login_function/functions.php';
-require_once __DIR__ . '/DbManager.php';
+require_once __DIR__ . '/../login_function/functions.php';
+require_once __DIR__ . '/../DbManager.php';
 
 $user_id = check_login(); // ログイン確認してユーザーID取得
 $pdo = getDb(); // ← ここでPDOインスタンスを取得する！
