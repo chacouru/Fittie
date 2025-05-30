@@ -22,57 +22,77 @@ if (isset($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fitty. | ログイン</title>
+    <link rel="stylesheet" href="../CSS/common.css">
     <link rel="stylesheet" href="../CSS/login.css">
 </head>
 <body>
   <!-- headerここから -->
-    <header class="header">
-  <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
-    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-  </button>
-  <div class="header_logo">
-    <h1><a href="./index.php">fitty.</a></h1>
-  </div>
-  <nav class="header_nav"> 
-    <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
-    <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
-    <a href="./search.php" class="icon-search" title="検索">🔍</a> 
-    <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a> 
-  </nav>
-</header>
-
-<div class="backdrop" id="menuBackdrop"></div>
-
-<?php if (isset($_SESSION['user_id'])): ?>
-<div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
-  <nav>
-    <?php if (!empty($brands)): ?>
-      <?php foreach ($brands as $index => $brand): ?>
-        <a href="brand.php?id=<?= htmlspecialchars($brand['id']) ?>"
-           role="menuitem"
-           class="bland"
-           style="--index: <?= $index ?>; top: <?= 75 + $index * 50 ?>px; left: <?= 170 - $index * 60 ?>px;">
-          <?= htmlspecialchars($brand['name']) ?>
-        </a>
-      <?php endforeach; ?>
-    <?php else: ?>
-      <p style="padding: 10px;">お気に入りのブランドが登録されていません。</p>
+  <header class="header">
+    <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
+      <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </button>
+    <div class="header_logo">
+      <h1><a href="./index.php">fitty.</a></h1>
+    </div>
+    <nav class="header_nav">
+      <a href="./mypage.php" class="icon-user" title="マイページ">👤</a>
+      <a href="./cart.php" class="icon-cart" title="カート">🛒</a>
+      <a href="./search.php" class="icon-search" title="検索">🔍</a>
+      <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a>
+    </nav>
+  </header>
+    
+  <div class="backdrop" id="menuBackdrop"></div>
+    
+    <?php if (isset($_SESSION['user_id'])): ?>
+    <div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
+      <nav>
+      <?php if (!empty($brands)): ?>
+        <?php foreach ($brands as $index => $brand): ?>
+          <a href="brand.php?id=<?= htmlspecialchars($brand['id']) ?>"
+             role="menuitem"
+             class="bland"
+             style="--index: <?= $index ?>; top: <?= 75 + $index * 50 ?>px; left: <?= 170 - $index * 60 ?>px;">
+            <?= htmlspecialchars($brand['name']) ?>
+          </a>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <p style="padding: 10px;">お気に入りのブランドが登録されていません。</p>
+      <?php endif; ?>
+    </nav>
+    </div>
     <?php endif; ?>
-  </nav>
-</div>
-<?php endif; ?>
-
-<div class="header_space"></div>
-<!-- headerここまで -->
-    <main>
-        <h2>ログイン</h2>
-        <form method="POST" action="login_function/login_handler.php">
-        <input type="email" name="email" required placeholder="メールアドレス"><br>
-        <input type="password" name="password" required placeholder="パスワード"><br>
-        <label><input type="checkbox" name="remember_me"> ログイン状態を保持</label><br>
-        <button type="submit">ログイン</button>
-        <a href="./register.php"><p>新規登録はこちら</p></a>
-        </form>
-    </main>
+    <!-- headerここまで -->
+    <div id="conteiner">
+      <main>
+          <h2>ログイン</h2>
+          <form method="POST" action="login_function/login_handler.php">
+            <input type="email" name="email" required placeholder="メールアドレス"><br>
+            <input type="password" name="password" required placeholder="パスワード"><br>
+            <label><input type="checkbox" name="remember_me"> ログイン状態を保持</label><br>
+            <button type="submit" id="submit">ログイン</button>
+            <a href="./register.php"><p>新規登録はこちら</p></a>
+          </form>
+        </main>
+      </div>
+      <footer class="footer">
+        <div class="footer_container">
+          <a href="index.php"><div class="footer_logo"><h2>fitty.</h2></div></a>
+          <div class="footer_links">
+              <a href="./overview.php">会社概要</a>
+              <a href="./terms.php">利用規約</a>
+              <a href="./privacy.php">プライバシーポリシー</a>
+          </div>
+          <div class="footer_sns">
+              <a href="#"><img src="icons/twitter.svg" alt="Twitter"></a>
+              <a href="#"><img src="icons/instagram.svg" alt="Instagram"></a>
+              <a href="#"><img src="icons/facebook.svg" alt="Facebook"></a>
+          </div>
+          <div class="footer_copy">
+              <small>&copy; 2025 Fitty All rights reserved.</small>
+          </div>
+    </footer>
+  </div>
+  <script src="../JavaScript/hamburger.js"></script>
 </body>
 </html>

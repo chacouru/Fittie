@@ -6,13 +6,14 @@
 }
 
 /* ベース設定 */
-body {
+#conteiner {
     font-family: 'Helvetica Neue', 'Segoe UI', sans-serif;
     background-color: #f3f3f3;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 70vh;
 }
 
 /* メインボックス（白背景 + 影） */
@@ -23,6 +24,7 @@ main {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 380px;
+    
 }
 
 /* 見出し */
@@ -58,7 +60,7 @@ input[type="checkbox"] {
 }
 
 /* ボタン */
-button {
+#submit  {
     width: 100%;
     padding: 12px;
     background-color: #ff6f00;
@@ -70,7 +72,7 @@ button {
     transition: background-color 0.2s ease;
 }
 
-button:hover {
+#submit :hover {
     background-color: #e65c00;
 }
 
