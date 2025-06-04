@@ -251,6 +251,63 @@
 
   /* headerここまで */
 
+  /* 商品カードここから */
+  .cart-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.6em 1.2em;
+  background-color: #ff6666;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cart-button:hover {
+  background-color: #e65555;
+}
+
+.cart-button:active {
+  transform: scale(0.98);
+}
+
+.cart-button.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.cart-btn-disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.cart-icon {
+  width: 1.2em;
+  height: 1.2em;
+  stroke-width: 2;
+}
+
+/* メッセージ表示用 */
+.cart-message {
+  margin-top: 8px;
+  font-size: 0.9em;
+  display: none;
+}
+
+.cart-message.success {
+  color: green;
+}
+
+.cart-message.error {
+  color: red;
+}
+
+  /* 商品カードここまで */
 
   /* footerここから */
   .footer {
