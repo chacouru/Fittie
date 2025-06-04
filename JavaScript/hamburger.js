@@ -52,5 +52,17 @@
             backdrop.addEventListener('click', closeMenu);
             items.forEach(a => a.addEventListener('click', closeMenu));
         })();
+document.addEventListener('DOMContentLoaded', function () {
+    const max = 4;
+    const checkboxes = document.querySelectorAll('input[name="brands[]"]');
 
-        
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            const checked = document.querySelectorAll('input[name="brands[]"]:checked');
+            if (checked.length > max) {
+                checkbox.checked = false;
+                alert(`お気に入りブランドは最大${max}つまで選択できます。`);
+            }
+        });
+    });
+});
