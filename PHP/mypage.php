@@ -74,6 +74,22 @@ function isActive($currentTab, $tabName) {
         <h1><a href="./index.php">fitty.</a></h1>
     </div>
     <nav class="header_nav"> 
+            <nav class="header_nav"> <?php
+    if (isset($_SESSION['user_id'])) {
+        echo '<div class="login_logout_img">
+  <a href="logout.php">
+    <img src="./img/logout.jpg" alt="ログアウト">
+  </a>
+</div>
+';
+    } else {
+        echo '<div class="login_logout_img">
+  <a href="logout.php">
+    <img src="./img/login.png" alt="ログイン">
+  </a>
+</div>
+';
+    }?>
         <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
         <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
         <a href="./search.php" class="icon-search" title="検索">🔍</a> 
@@ -96,7 +112,7 @@ function isActive($currentTab, $tabName) {
                 </a>
             <?php endforeach; ?>
         <?php else: ?>
-            <p style="padding: 10px;">お気に入りのブランドが登録されていません。</p>
+            <p style="padding: 10px; margin-top:65px;">お気に入りのブランドが登録されていません。</p>
         <?php endif; ?>
     </nav>
 </div>
@@ -159,10 +175,10 @@ function isActive($currentTab, $tabName) {
                     </div>
                     <h3>お気に入りブランド</h3>
                     <div class="brand-checkboxes">
-                        <?php foreach ($all_brands as $brand): ?>
+                        <?php foreach ($all_brands as $brands): ?>
                             <label>
-                                <input type="checkbox" name="brands[]" value="<?= $brand['id'] ?>" <?= in_array($brand['id'], $user_brands) ? 'checked' : '' ?>>
-                                <?= htmlspecialchars($brand['name']) ?>
+                                <input type="checkbox" name="brands[]" value="<?= $brands['id'] ?>" <?= in_array($brands['id'], $user_brands) ? 'checked' : '' ?>>
+                                <?= htmlspecialchars($brands['name']) ?>
                             </label><br>
                         <?php endforeach; ?>
                     </div>
