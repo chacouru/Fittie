@@ -191,7 +191,7 @@ main {
 }
 
 /* 商品カード */
-.product-card {
+/* .product-card {
     background: white;
     border-radius: 16px;
     overflow: hidden;
@@ -204,7 +204,7 @@ main {
     aspect-ratio: 3/4;
     display: flex;
     flex-direction: column;
-}
+} */
 
 .product-card:hover {
     transform: translateY(-8px);
@@ -500,6 +500,7 @@ main {
         font-size: 0.9rem;
     }
     
+    @media (max-width: 768px) {
     #history,
     #recommend,
     #new-arrivals,
@@ -523,5 +524,3 @@ main {
     
     .product-info {
         padding: 16px;
-    }
-}
