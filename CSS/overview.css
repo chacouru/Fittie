@@ -1,4 +1,4 @@
-@charset 'UTF-8';
+@charset "UTF-8";
 
 body {
   font-family: 'Noto Sans JP', sans-serif, Arial, Helvetica;
@@ -8,7 +8,7 @@ body {
   line-height: 1.6;
 }
 
-main {
+#overview-main {
   max-width: 600px;
   margin: 0 auto;
   background: #fff;
@@ -16,10 +16,10 @@ main {
   box-shadow: 0 0 12px rgba(0,0,0,0.1);
   border-radius: 8px;
   position: relative;
-  padding-right: 160px; /* 画像スペース確保 */
+  padding-right: 160px;
 }
 
-#title {
+#overview-main #title {
   font-size: 2.2rem;
   color: #222;
   border-bottom: 3px solid #0078d7;
@@ -28,18 +28,17 @@ main {
   font-weight: 700;
 }
 
-p {
+.company-info p {
   font-size: 1.1rem;
   margin-bottom: 15px;
 }
 
-p:nth-of-type(4) {
+.company-info p:nth-of-type(4) {
   font-weight: 600;
   color: #0078d7;
 }
 
-/* 縦長楕円形の画像 */
-img {
+.ceo-image {
   position: absolute;
   top: 30px;
   right: 40px;
@@ -51,24 +50,56 @@ img {
   border: 3px solid #0078d7;
 }
 
-/* ===== レスポンシブ対応 ===== */
+.ceo-profile,
+.ceo-message {
+  margin-top: 40px;
+}
+
+.ceo-profile h2,
+.ceo-message h2 {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: #0078d7;
+}
+
+.ceo-profile ul {
+  padding-left: 20px;
+}
+
+.ceo-profile li {
+  margin-bottom: 8px;
+}
+
+.ceo-message p {
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.ceo-signature {
+  text-align: right;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* レスポンシブ対応 */
 @media screen and (max-width: 768px) {
-  main {
+  #overview-main {
     max-width: 90%;
     padding: 20px;
-    padding-bottom: 200px; /* 画像のスペースを下に確保 */
+    padding-bottom: 200px;
     padding-right: 20px;
   }
 
-  #title {
+  #overview-main #title {
     font-size: 1.8rem;
   }
 
-  p {
+  .company-info p,
+  .ceo-message p {
     font-size: 1rem;
   }
 
-  img {
+  .ceo-image {
     position: static;
     display: block;
     margin: 20px auto 0;
@@ -79,15 +110,16 @@ img {
 }
 
 @media screen and (max-width: 480px) {
-  #title {
+  #overview-main #title {
     font-size: 1.5rem;
   }
 
-  p {
+  .company-info p,
+  .ceo-message p {
     font-size: 0.95rem;
   }
 
-  img {
+  .ceo-image {
     width: 90px;
     height: 135px;
     border-radius: 45px / 67.5px;
