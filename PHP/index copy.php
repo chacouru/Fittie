@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/login_function/session.php';
-require_once 'cart_button.php'; // カートボタン用の関数を読み込み
+require_once 'cart_button.php'; // カートボタン用関数
 
-// データベース接続設定
+// DB接続
 $host = 'localhost';
 $dbname = 'fitty';
 $username = 'root';
@@ -15,7 +15,7 @@ try {
     die('データベース接続エラー: ' . $e->getMessage());
 }
 
-// ログインユーザーの最近見た商品を取得
+// 閲覧履歴商品
 $recent_products = [];
 if (isset($_SESSION['user_id'])) {
     $stmt = $pdo->prepare("
@@ -32,61 +32,61 @@ if (isset($_SESSION['user_id'])) {
     $recent_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// おすすめ商品を取得（レーティング順、在庫あり、アクティブな商品）
+// おすすめ
+$stmt = $pdo->prepare("
+    SELECT p.*, c.name as category_name, b.name as brand_name,
+           COUNT(vh.id) as view_count
+    FROM products p
+    LEFT JOIN categories c ON p.category_id = c.id
+    LEFT JOIN brands b ON p.brand_id = b.id
+    LEFT JOIN view_history vh ON p.id = vh.product_id
+    WHERE p.is_active = 1 AND p.stock > 0
+    GROUP BY p.id
+    ORDER BY view_count DESC, p.rating DESC, p.review_count DESC, p.created_at DESC
+    LIMIT 10
+");
+$stmt->execute();
+$recommended_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// セール
+$stmt = $pdo->prepare("
+    SELECT p.*, c.name as category_name, b.name as brand_name,
+           CASE 
+               WHEN p.sale_price IS NOT NULL AND p.sale_price > 0 
+               THEN ((p.price - p.sale_price) / p.price) * 100 
+               ELSE 0 
+           END as discount_rate
+    FROM products p
+    LEFT JOIN categories c ON p.category_id = c.id
+    LEFT JOIN brands b ON p.brand_id = b.id
+    WHERE p.is_active = 1 AND p.is_on_sale = 1 AND p.stock > 0
+    ORDER BY discount_rate DESC, p.created_at DESC
+    LIMIT 10
+");
+$stmt->execute();
+$sale_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// 新着
 $stmt = $pdo->prepare("
     SELECT p.*, c.name as category_name, b.name as brand_name
     FROM products p
     LEFT JOIN categories c ON p.category_id = c.id
     LEFT JOIN brands b ON p.brand_id = b.id
     WHERE p.is_active = 1 AND p.stock > 0
-    ORDER BY p.rating DESC, p.review_count DESC, p.created_at DESC
+    ORDER BY p.created_at DESC
     LIMIT 10
 ");
 $stmt->execute();
-$recommended_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$new_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// セール商品を取得
-$stmt = $pdo->prepare("
-    SELECT p.*, c.name as category_name, b.name as brand_name
-    FROM products p
-    LEFT JOIN categories c ON p.category_id = c.id
-    LEFT JOIN brands b ON p.brand_id = b.id
-    WHERE p.is_active = 1 AND p.is_on_sale = 1 AND p.stock > 0
-    ORDER BY 
-        CASE 
-            WHEN p.sale_price IS NOT NULL AND p.sale_price > 0 
-            THEN ((p.price - p.sale_price) / p.price) * 100 
-            ELSE 0 
-        END DESC
-    LIMIT 10
-");
-$stmt->execute();
-$sale_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// ブランド一覧を取得
-$stmt = $pdo->prepare("SELECT * FROM brands ORDER BY name");
-$stmt->execute();
-$brands = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// 商品カード表示用の関数
+// 商品カード関数（再掲）
 function displayProductCard($product) {
-    $brand_dir = $product['brand_name'] ?? 'no-brand';
-$image_file = $product['image'] ?? 'no-image.jpg';
-
-// フォルダ名変換（半角英数字と _ のみに）
-$safe_brand_dir = preg_replace('/[^\w\-]/u', '_', $brand_dir);
-
-// 実際の画像パスを作成
-$image_path = "../PHP/img/products/{$safe_brand_dir}/{$image_file}";
-
-// デバッグ表示
-// echo "<p>{$image_path}</p>";
-
-
-    $brand_name = $product['brand_name'] ?? 'ブランド不明';
+    $brand_name = $product['brand_name'] ?? 'no-brand';
+    $image_file = $product['image'] ?? 'no-image.jpg';
+    $safe_brand_folder = preg_replace('/[^\w\-]/u', '_', $brand_name);
+    $image_path = "../PHP/img/products/{$safe_brand_folder}/{$image_file}";
     $category_name = $product['category_name'] ?? 'カテゴリ不明';
-    
-    // セール価格の計算
+
     $display_price = $product['price'];
     $sale_info = '';
     if ($product['is_on_sale'] && $product['sale_price'] && $product['sale_price'] > 0) {
@@ -95,48 +95,41 @@ $image_path = "../PHP/img/products/{$safe_brand_dir}/{$image_file}";
         $sale_info = "<span class='original-price'>¥" . number_format($product['price']) . "</span><span class='sale-badge'>{$discount_rate}%OFF</span>";
     }
 
-    // レーティング表示
     $rating_stars = '';
     if ($product['rating'] > 0) {
         $full_stars = floor($product['rating']);
         $half_star = ($product['rating'] - $full_stars) >= 0.5 ? 1 : 0;
-        
-        for ($i = 0; $i < $full_stars; $i++) {
-            $rating_stars .= '★';
-        }
-        if ($half_star) {
-            $rating_stars .= '☆';
-        }
+        for ($i = 0; $i < $full_stars; $i++) $rating_stars .= '★';
+        if ($half_star) $rating_stars .= '☆';
         $rating_stars .= " ({$product['rating']}) ({$product['review_count']}件)";
+    }
+
+    $is_new = false;
+    if (isset($product['created_at'])) {
+        $created_date = new DateTime($product['created_at']);
+        $now = new DateTime();
+        $diff = $now->diff($created_date);
+        $is_new = $diff->days <= 7;
     }
 
     echo "<div class='product-card' data-product-id='{$product['id']}'>";
     echo "<div class='product-image' onclick=\"window.location.href='./product_detail.php?id={$product['id']}'\">";
     echo "<img src='{$image_path}' alt='{$product['name']}' onerror=\"this.src='../PHP/img/no-image.jpg'\">";
-    if ($product['is_on_sale']) {
-        echo "<div class='sale-label'>SALE</div>";
-    }
+    if ($product['is_on_sale']) echo "<div class='sale-label'>SALE</div>";
+    if ($is_new) echo "<div class='new-label'>NEW</div>";
     echo "</div>";
+
     echo "<div class='product-info'>";
     echo "<div class='product-brand'>{$brand_name}</div>";
     echo "<div class='product-name' onclick=\"window.location.href='./product_detail.php?id={$product['id']}'\">{$product['name']}</div>";
     echo "<div class='product-category'>{$category_name}</div>";
-    if ($rating_stars) {
-        echo "<div class='product-rating'>{$rating_stars}</div>";
-    }
-    echo "<div class='product-price'>";
-    echo "<span class='current-price'>¥" . number_format($display_price) . "</span>";
-    echo $sale_info;
-    echo "</div>";
+    if ($rating_stars) echo "<div class='product-rating'>{$rating_stars}</div>";
+    echo "<div class='product-price'><span class='current-price'>¥" . number_format($display_price) . "</span>{$sale_info}</div>";
     echo "<div class='product-stock'>在庫: {$product['stock']}個</div>";
 
-    // カートボタンを表示
-    displayCartButton($product['id'], $product['name'], $product['stock'], $display_price, false);
-    
-    echo "</div>";
-    echo "</div>";
+    displayCartButton($product['id'], $product['name'], $product['stock'], $product['price']);
+    echo "</div></div>";
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -147,327 +140,8 @@ $image_path = "../PHP/img/products/{$safe_brand_dir}/{$image_file}";
     <link rel="stylesheet" href="../CSS/reset.css">
     <link rel="stylesheet" href="../CSS/common.css">
     <link rel="stylesheet" href="../CSS/index.css">
-    <?php echo getCartButtonCSS(); ?>
-    <style>
-        /* スライドショー用のスタイル */
-        #slideshow {
-            position: relative;
-            width: 100%;
-            height: 400px;
-            overflow: hidden;
-            border-radius: 12px;
-            margin-bottom: 40px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-        
-        .slide-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-        
-        .slide.active {
-            opacity: 1;
-        }
-        
-        .slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-        
-        .slide-content {
-            position: relative;
-            z-index: 2;
-            color: white;
-            padding: 0 60px;
-            max-width: 500px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-        }
-        
-        .slide-content h2 {
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            line-height: 1.2;
-        }
-        
-        .slide-content p {
-            font-size: 18px;
-            margin-bottom: 25px;
-            line-height: 1.4;
-        }
-        
-        .slide-btn {
-            display: inline-block;
-            background: rgba(255,255,255,0.9);
-            color: #333;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .slide-btn:hover {
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .slide-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.8);
-            border: none;
-            font-size: 24px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 3;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .slide-nav:hover {
-            background: rgba(255,255,255,0.95);
-            transform: translateY(-50%) scale(1.1);
-        }
-        
-        .slide-nav.prev {
-            left: 20px;
-        }
-        
-        .slide-nav.next {
-            right: 20px;
-        }
-        
-        .slide-dots {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 3;
-        }
-        
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.5);
-            background: transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .dot.active,
-        .dot:hover {
-            background: white;
-            border-color: white;
-        }
-        
-        /* レスポンシブ対応 */
-        @media (max-width: 768px) {
-            #slideshow {
-                height: 300px;
-            }
-            
-            .slide-content {
-                padding: 0 30px;
-                max-width: 350px;
-            }
-            
-            .slide-content h2 {
-                font-size: 24px;
-            }
-            
-            .slide-content p {
-                font-size: 16px;
-            }
-            
-            .slide-nav {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-            
-            .slide-nav.prev {
-                left: 15px;
-            }
-            
-            .slide-nav.next {
-                right: 15px;
-            }
-        }
-        
-        /* 商品カード用の追加スタイル */
-        .product-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background: white;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        
-        .product-image {
-            position: relative;
-            height: 200px;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .sale-label {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: #ff4444;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .product-info {
-            padding: 15px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .product-brand {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-        
-        .product-name {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #333;
-            cursor: pointer;
-        }
-        
-        .product-name:hover {
-            color: #007bff;
-        }
-        
-        .product-category {
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 8px;
-        }
-        
-        .product-rating {
-            font-size: 14px;
-            color: #ffa500;
-            margin-bottom: 10px;
-        }
-        
-        .product-price {
-            margin-bottom: 8px;
-        }
-        
-        .current-price {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .original-price {
-            font-size: 14px;
-            color: #999;
-            text-decoration: line-through;
-            margin-left: 8px;
-        }
-        
-        .sale-badge {
-            background: #ff4444;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-left: 8px;
-        }
-        
-        .product-stock {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        
-        /* 商品カード内のカートボタンスタイル調整 */
-        .product-card .cart-button-container {
-            margin-top: auto;
-        }
-        
-        .product-card .cart-btn {
-            width: 100%;
-            justify-content: center;
-        }
-        
-        #history, #recommend, #sale {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-        
-        .no-products {
-            text-align: center;
-            color: #666;
-            padding: 40px;
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        
-        .section-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 40px 0 20px 0;
-            color: #333;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-        }
-    </style>
+
+
 </head>
 
 <body>
@@ -528,7 +202,7 @@ $image_path = "../PHP/img/products/{$safe_brand_dir}/{$image_file}";
                         </div>
                     </div>
                     <div class="slide">
-                        <img src="../PHP/img/slide3.jpg" alt="新着アイテム">
+                        <img src="../PHP/img/slideshow/img1.avif" alt="新着アイテム">
                         <div class="slide-content">
                             <h2>注目の新着アイテム</h2>
                             <p>厳選されたブランドから新作が入荷</p>
@@ -574,6 +248,15 @@ $image_path = "../PHP/img/products/{$safe_brand_dir}/{$image_file}";
                 <?php endif; ?>
             </div>
 
+            <?php if (!empty($new_products)): ?>
+                <h1 class="section-title">新着アイテム</h1>
+                <div id="new-arrivals">
+                    <?php foreach ($new_products as $product): ?>
+                        <?php displayProductCard($product); ?>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
             <?php if (!empty($sale_products)): ?>
                 <h1 class="section-title">セール商品</h1>
                 <div id="sale">
@@ -609,60 +292,7 @@ $image_path = "../PHP/img/products/{$safe_brand_dir}/{$image_file}";
     </footer>
 
     <script src="../JavaScript/hamburger.js"></script>
-    <?php echo getCartButtonJS(); ?>
-    <script>
-        // スライドショーの制御
-        let currentSlideIndex = 0;
-        const slides = document.querySelectorAll('.slide');
-        const dots = document.querySelectorAll('.dot');
-        let slideInterval;
-        
-        function showSlide(index) {
-            // 全てのスライドを非アクティブに
-            slides.forEach(slide => slide.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
-            
-            // 指定されたスライドをアクティブに
-            slides[index].classList.add('active');
-            dots[index].classList.add('active');
-            
-            currentSlideIndex = index;
-        }
-        
-        function nextSlide() {
-            const nextIndex = (currentSlideIndex + 1) % slides.length;
-            showSlide(nextIndex);
-        }
-        
-        function prevSlide() {
-            const prevIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
-            showSlide(prevIndex);
-        }
-        
-        function currentSlide(index) {
-            showSlide(index - 1);
-            // 手動操作時は自動スライドを一時停止し、3秒後に再開
-            clearInterval(slideInterval);
-            startAutoSlide();
-        }
-        
-        function startAutoSlide() {
-            slideInterval = setInterval(nextSlide, 5000); // 5秒間隔
-        }
-        
-        // 自動スライド開始
-        startAutoSlide();
-        
-        // スライドショーにマウスが乗った時は自動スライドを停止
-        const slideshow = document.getElementById('slideshow');
-        slideshow.addEventListener('mouseenter', () => {
-            clearInterval(slideInterval);
-        });
-        
-        // マウスが離れた時は自動スライドを再開
-        slideshow.addEventListener('mouseleave', () => {
-            startAutoSlide();
-        });
-    </script>
+
+    <script src="../JavaScript/slideshow.js"></script>
 </body>
 </html>
