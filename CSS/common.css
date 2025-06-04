@@ -74,6 +74,19 @@
       outline: none;
   }
 
+.login_logout_img {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 8px;
+}
+
+.login_logout_img img {
+  height: 24px; /* 他のアイコンに合わせて調整（必要に応じて 20px など） */
+  vertical-align: middle;
+}
+
+
   /* ハンバーガーボタン */
   .menu_button {
       border: none;
