@@ -3,6 +3,7 @@ session_start();
 require_once 'db_connect.php'; // DB接続ファイルを読み込む
 
 $brands = [];
+$user_id = null;
 
 // ログインしている場合、お気に入りブランドを取得
 if (isset($_SESSION['user_id'])) {
