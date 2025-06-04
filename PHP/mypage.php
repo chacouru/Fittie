@@ -65,7 +65,7 @@ function isActive($currentTab, $tabName) {
     <link rel="stylesheet" href="../CSS/mypage.css">
 </head>
 <body>
-
+<!-- headerここから -->
 <header class="header">
     <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
         <span class="bar"></span><span class="bar"></span><span class="bar"></span>
@@ -119,6 +119,7 @@ function isActive($currentTab, $tabName) {
 <?php endif; ?>
 
 <div class="header_space"></div>
+<!-- headerここまで -->
 
 <div class="mypage-container">
     <h1 class="page-title">マイページ</h1>

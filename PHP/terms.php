@@ -27,45 +27,61 @@ if (isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="../CSS/terms.css">
 </head>
 <body>
-  <!-- headerここから -->
-  <header class="header">
-  <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
-    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-  </button>
-  <div class="header_logo">
-    <h1><a href="./index.php">fitty.</a></h1>
-  </div>
-  <nav class="header_nav"> 
-    <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
-    <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
-    <a href="./search.php" class="icon-search" title="検索">🔍</a> 
-    <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a> 
-  </nav>
+<!-- headerここから -->
+<header class="header">
+    <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </button>
+    <div class="header_logo">
+        <h1><a href="./index.php">fitty.</a></h1>
+    </div>
+    <nav class="header_nav"> 
+            <nav class="header_nav"> <?php
+    if (isset($_SESSION['user_id'])) {
+        echo '<div class="login_logout_img">
+  <a href="logout.php">
+    <img src="./img/logout.jpg" alt="ログアウト">
+  </a>
+</div>
+';
+    } else {
+        echo '<div class="login_logout_img">
+  <a href="logout.php">
+    <img src="./img/login.png" alt="ログイン">
+  </a>
+</div>
+';
+    }?>
+        <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
+        <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
+        <a href="./search.php" class="icon-search" title="検索">🔍</a> 
+        <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a> 
+    </nav>
 </header>
 
 <div class="backdrop" id="menuBackdrop"></div>
 
-<?php if (isset($_SESSION['user_id'])): ?>
+<?php if ($user_id): ?>
 <div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
-  <nav>
-    <?php if (!empty($brands)): ?>
-      <?php foreach ($brands as $index => $brand): ?>
-        <a href="brand.php?id=<?= htmlspecialchars($brand['id']) ?>"
-           role="menuitem"
-           class="bland"
-           style="--index: <?= $index ?>; top: <?= 75 + $index * 50 ?>px; left: <?= 170 - $index * 60 ?>px;">
-          <?= htmlspecialchars($brand['name']) ?>
-        </a>
-      <?php endforeach; ?>
-    <?php else: ?>
-      <p style="padding: 10px;">お気に入りのブランドが登録されていません。</p>
-    <?php endif; ?>
-  </nav>
+    <nav>
+        <?php if (!empty($brands)): ?>
+            <?php foreach ($brands as $index => $brand): ?>
+                <a href="brand.php?id=<?= htmlspecialchars($brand['id']) ?>"
+                   role="menuitem"
+                   class="bland"
+                   style="--index: <?= $index ?>; top: <?= 75 + $index * 50 ?>px; left: <?= 170 - $index * 60 ?>px;">
+                    <?= htmlspecialchars($brand['name']) ?>
+                </a>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p style="padding: 10px; margin-top:65px;">お気に入りのブランドが登録されていません。</p>
+        <?php endif; ?>
+    </nav>
 </div>
 <?php endif; ?>
 
 <div class="header_space"></div>
-  <!-- headerここまで -->
+<!-- headerここまで -->
 <main>
     <h1 id="title">利用規約</h1>
     <p>株式会社fitty.（以下「当社」といいます）が運営するファッションECサイト「fitty.」（以下「本サイト」といいます）のご利用に際しての条件を、以下の通り定めます。本サイトをご利用になる前に、必ず本規約をお読みいただき、ご同意の上でご利用ください。</p>
