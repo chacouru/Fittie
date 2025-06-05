@@ -191,7 +191,7 @@ main {
 }
 
 /* 商品カード */
-/* .product-card {
+.product-card {
     background: white;
     border-radius: 16px;
     overflow: hidden;
@@ -202,9 +202,9 @@ main {
     max-width: 320px;
     border: 1px solid #f0f0f0;
     aspect-ratio: 3/4;
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
-} */
+}
 
 .product-card:hover {
     transform: translateY(-8px);
@@ -298,8 +298,7 @@ main {
     line-height: 1.4;
     min-height: 2.8rem;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+
     overflow: hidden;
 }
 
@@ -524,3 +523,6 @@ main {
     
     .product-info {
         padding: 16px;
+    }
+}
+}
