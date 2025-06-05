@@ -42,6 +42,30 @@ try {
         throw new Exception("商品が見つかりませんでした。");
     }
 
+    // 商品画像パスを生成（商品カード関数と同じ方式）
+    $brand_name = isset($product['brand_name']) ? trim($product['brand_name']) : 'no-brand';
+    $safe_brand_folder = preg_replace('/[^\w\-]/u', '_', $brand_name);
+    $image_file = $product['image'] ?? 'no-image.png';
+    $product_image_path = "../PHP/img/products/{$safe_brand_folder}/{$image_file}";
+
+    // セール情報処理
+    $display_price = $product['price'];
+    $sale_info = '';
+    if ($product['is_on_sale'] && $product['sale_price'] && $product['sale_price'] > 0) {
+        $display_price = $product['sale_price'];
+        $discount_rate = round((($product['price'] - $product['sale_price']) / $product['price']) * 100);
+        $sale_info = "<span class='original-price'>¥" . number_format($product['price']) . "</span><span class='sale-badge'>{$discount_rate}%OFF</span>";
+    }
+
+    // 新着ラベルの判定（7日以内）
+    $is_new = false;
+    if (isset($product['created_at'])) {
+        $created_date = new DateTime($product['created_at']);
+        $now = new DateTime();
+        $diff = $now->diff($created_date);
+        $is_new = $diff->days <= 7;
+    }
+
     // 閲覧履歴を記録（ログインユーザーのみ）
     if ($user_id) {
         // 既存の履歴をチェック
@@ -122,6 +146,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
         }
     }
 }
+
+// 関連商品の画像パス生成関数
+function getProductImagePath($product) {
+    $brand_name = isset($product['brand_name']) ? trim($product['brand_name']) : 'no-brand';
+    $safe_brand_folder = preg_replace('/[^\w\-]/u', '_', $brand_name);
+    $image_file = $product['image'] ?? 'no-image.png';
+    return "../PHP/img/products/{$safe_brand_folder}/{$image_file}";
+}
 ?>
 
 <!DOCTYPE html>
@@ -130,251 +162,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($product['name']) ?> | 商品詳細 | fitty.</title>
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="../CSS/common.css">
     <link rel="stylesheet" href="../CSS/products.css">
-    <style>
-        .product_detail_container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .product_main {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .product_image {
-            text-align: center;
-        }
-        
-        .product_image img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .product_info {
-            padding: 20px 0;
-        }
-        
-        .product_info h1 {
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        
-        .product_meta {
-            margin-bottom: 20px;
-            font-size: 0.9em;
-            color: #666;
-        }
-        
-        .product_meta span {
-            margin-right: 15px;
-        }
-        
-        .price {
-            font-size: 2em;
-            color: #e74c3c;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-        
-        .sale_price {
-            color: #27ae60;
-        }
-        
-        .original_price {
-            text-decoration: line-through;
-            color: #999;
-            font-size: 0.8em;
-            margin-left: 10px;
-        }
-        
-        .stock_info {
-            margin: 15px 0;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 4px;
-        }
-        
-        .stock_low {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .stock_out {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .description {
-            line-height: 1.6;
-            margin: 20px 0;
-            color: #555;
-        }
-        
-        .rating {
-            margin: 15px 0;
-        }
-        
-        .stars {
-            color: #ffc107;
-            margin-right: 10px;
-        }
-        
-        .add_to_cart_form {
-            margin: 30px 0;
-        }
-        
-        .quantity_selector {
-            margin: 15px 0;
-        }
-        
-        .quantity_selector label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        
-        .quantity_selector input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 80px;
-        }
-        
-        .add_to_cart_btn {
-            background: #007bff;
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 4px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .add_to_cart_btn:hover {
-            background: #0056b3;
-        }
-        
-        .add_to_cart_btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .message {
-            padding: 10px;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
-        
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .related_products {
-            margin-top: 50px;
-        }
-        
-        .related_products h2 {
-            margin-bottom: 30px;
-            color: #333;
-        }
-        
-        .related_grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        
-        .related_item {
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        
-        .related_item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
-        .related_item img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        
-        .related_item h3 {
-            margin: 10px 0;
-            font-size: 1.1em;
-        }
-        
-        .related_item .price {
-            font-size: 1.2em;
-            margin: 5px 0;
-        }
-        
-        @media (max-width: 768px) {
-            .product_main {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .product_info h1 {
-                font-size: 1.8em;
-            }
-            
-            .price {
-                font-size: 1.5em;
-            }
-        }
-    </style>
 </head>
 <body>
-<!-- headerここから -->
 <header class="header">
-    <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
-        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-    </button>
-    <div class="header_logo">
-        <h1><a href="./index.php">fitty.</a></h1>
-    </div>
-    <nav class="header_nav">
-        <?php if (isset($_SESSION['user_id'])): ?>
-            <div class="login_logout_img">
-                <a href="logout.php">
-                    <img src="./img/logout.jpg" alt="ログアウト">
-                </a>
-            </div>
-        <?php else: ?>
-            <div class="login_logout_img">
-                <a href="login.php">
-                    <img src="./img/login.png" alt="ログイン">
-                </a>
-            </div>
-        <?php endif; ?>
-        <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
-        <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
-        <a href="./search.php" class="icon-search" title="検索">🔍</a> 
-        <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a> 
-    </nav>
+  <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </button>
+  <div class="header_logo">
+    <h1><a href="./index.php">fitty.</a></h1>
+  </div>
+  <nav class="header_nav"> 
+    <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
+    <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
+    <a href="./search.php" class="icon-search" title="検索">🔍</a> 
+    <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a> 
+  </nav>
 </header>
 
 <div class="backdrop" id="menuBackdrop"></div>
@@ -417,8 +222,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
 
     <div class="product_main">
         <div class="product_image">
-            <img src="./img/products/<?= htmlspecialchars($product['image']) ?>" 
-                 alt="<?= htmlspecialchars($product['name']) ?>">
+            <img src="<?= htmlspecialchars($product_image_path) ?>" 
+                 alt="<?= htmlspecialchars($product['name']) ?>"
+                 onerror="this.src='../PHP/img/no-image.png'">
+            <?php if ($product['is_on_sale']): ?>
+                <div class="sale-label">SALE</div>
+            <?php endif; ?>
+            <?php if ($is_new): ?>
+                <div class="new-label">NEW</div>
+            <?php endif; ?>
         </div>
         
         <div class="product_info">
@@ -445,12 +257,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
             <?php endif; ?>
 
             <div class="price">
-                <?php if ($product['is_on_sale'] && $product['sale_price']): ?>
-                    <span class="sale_price">¥<?= number_format($product['sale_price']) ?></span>
-                    <span class="original_price">¥<?= number_format($product['price']) ?></span>
-                <?php else: ?>
-                    ¥<?= number_format($product['price']) ?>
-                <?php endif; ?>
+                <span class="current-price">¥<?= number_format($display_price) ?></span>
+                <?= $sale_info ?>
             </div>
 
             <div class="stock_info <?= $product['stock'] <= 0 ? 'stock_out' : ($product['stock'] <= 5 ? 'stock_low' : '') ?>">
@@ -503,10 +311,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
             <h2>関連商品</h2>
             <div class="related_grid">
                 <?php foreach ($related_products as $related): ?>
+                    <?php
+                    $related_image_path = getProductImagePath($related);
+                    ?>
                     <div class="related_item">
                         <a href="product_detail.php?id=<?= $related['id'] ?>">
-                            <img src="./img/products/<?= htmlspecialchars($related['image']) ?>" 
-                                 alt="<?= htmlspecialchars($related['name']) ?>">
+                            <img src="<?= htmlspecialchars($related_image_path) ?>" 
+                                 alt="<?= htmlspecialchars($related['name']) ?>"
+                                 onerror="this.src='../PHP/img/no-image.png'">
                             <h3><?= htmlspecialchars($related['name']) ?></h3>
                             <?php if ($related['brand_name']): ?>
                                 <p style="color: #666; font-size: 0.9em;"><?= htmlspecialchars($related['brand_name']) ?></p>
@@ -520,6 +332,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     <?php endif; ?>
 </div>
 
+<footer class="footer">
+    <div class="footer_container">
+      <a href="index.php">
+        <div class="footer_logo">
+          <h2>fitty.</h2>
+        </div>
+      </a>
+      <div class="footer_links">
+        <a href="./overview.php">会社概要</a>
+        <a href="./terms.php">利用規約</a>
+        <a href="./privacy.php">プライバシーポリシー</a>
+      </div>
+      <div class="footer_sns">
+        <a href="#" aria-label="Twitter"><img src="icons/twitter.svg" alt="Twitter"></a>
+        <a href="#" aria-label="Instagram"><img src="icons/instagram.svg" alt="Instagram"></a>
+        <a href="#" aria-label="Facebook"><img src="icons/facebook.svg" alt="Facebook"></a>
+      </div>
+      <div class="footer_copy">
+        <small>&copy; 2025 Fitty All rights reserved.</small>
+      </div>
+    </div>
+  </footer>
+  <!-- footer -->
+    <script src="../JavaScript/hamburger.js"></script>
 <script>
 // メニュートグル機能
 document.getElementById('menuToggle')?.addEventListener('click', function() {
