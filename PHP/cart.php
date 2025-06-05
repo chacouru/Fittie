@@ -53,7 +53,7 @@ $user_id = check_login(); // 未ログインの場合は login.php にリダイ�
 
       <div class="total_section">
         <div class="total_label">合計（税込）</div>
-        <div class="total_price">¥3,456</div>
+        <div class="total_price"></div>
       </div>
 
       <button class="checkout_btn">レジへ進む</button>
