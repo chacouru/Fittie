@@ -1,6 +1,4 @@
 <?php
-// cart_button.php - カートボタンコンポーネント
-
 // 必要なファイルを読み込み
 require_once __DIR__ . '/DbManager.php';
 require_once __DIR__ . '/Encode.php';
@@ -110,11 +108,7 @@ function displayCartButton($product_id, $product_name, $stock, $price) {
             ' . $disabled . '
             ' . (!$is_logged_in ? 'data-login-required="true"' : '') . '
         >
-            <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="m1 1 4 4 5.5 11h11l3-8H6"></path>
-            </svg>
+           
             <span class="button-text">' . $button_text . '</span>
         </button>
     </div>
