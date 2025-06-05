@@ -79,13 +79,12 @@ $stmt = $pdo->prepare("
 $stmt->execute();
 $new_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 商品カード関数
+// 商品カード関数（コンパクト版）
 function displayProductCard($product) {
     $brand_name = $product['brand_name'] ?? 'no-brand';
     $image_file = $product['image'] ?? 'no-image.jpg';
     $safe_brand_folder = preg_replace('/[^\w\-]/u', '_', $brand_name);
     $image_path = "../PHP/img/products/{$safe_brand_folder}/{$image_file}";
-    $category_name = $product['category_name'] ?? 'カテゴリ不明';
 
     $display_price = $product['price'];
     $sale_info = '';
@@ -93,15 +92,6 @@ function displayProductCard($product) {
         $display_price = $product['sale_price'];
         $discount_rate = round((($product['price'] - $product['sale_price']) / $product['price']) * 100);
         $sale_info = "<span class='original-price'>¥" . number_format($product['price']) . "</span><span class='sale-badge'>{$discount_rate}%OFF</span>";
-    }
-
-    $rating_stars = '';
-    if ($product['rating'] > 0) {
-        $full_stars = floor($product['rating']);
-        $half_star = ($product['rating'] - $full_stars) >= 0.5 ? 1 : 0;
-        for ($i = 0; $i < $full_stars; $i++) $rating_stars .= '★';
-        if ($half_star) $rating_stars .= '☆';
-        $rating_stars .= " ({$product['rating']}) ({$product['review_count']}件)";
     }
 
     $is_new = false;
@@ -119,15 +109,37 @@ function displayProductCard($product) {
     if ($is_new) echo "<div class='new-label'>NEW</div>";
     echo "</div>";
 
-    // echo "<div class='product-info'>";
+    echo "<div class='product-info'>";
     echo "<div class='product-brand'>{$brand_name}</div>";
-    // echo "<div class='product-name' onclick=\"window.location.href='./product_detail.php?id={$product['id']}'\">{$product['name']}</div>";
-    // if ($rating_stars) echo "<div class='product-rating'>{$rating_stars}</div>";
     echo "<div class='product-price'><span class='current-price'>¥" . number_format($display_price) . "</span>{$sale_info}</div>";
-    // echo "<div class='product-stock'>在庫: {$product['stock']}個</div>";
-
+    
     displayCartButton($product['id'], $product['name'], $product['stock'], $product['price']);
     echo "</div></div>";
+}
+
+// カルーセル表示関数
+function displayProductCarousel($products, $section_id, $section_title) {
+    if (empty($products)) {
+        echo "<div class='no-products'>現在{$section_title}はありません</div>";
+        return;
+    }
+    
+    echo "<h1 class='section-title'>{$section_title}</h1>";
+    echo "<div class='carousel-container' id='{$section_id}'>";
+    echo "<div class='carousel-wrapper'>";
+    echo "<div class='carousel-track'>";
+    
+    foreach ($products as $product) {
+        displayProductCard($product);
+    }
+    
+    echo "</div></div>";
+    
+    // ナビゲーションボタン
+    echo "<button class='carousel-nav prev' onclick='moveCarousel(\"{$section_id}\", -1)' aria-label='前の商品'>‹</button>";
+    echo "<button class='carousel-nav next' onclick='moveCarousel(\"{$section_id}\", 1)' aria-label='次の商品'>›</button>";
+    
+    echo "</div>";
 }
 ?>
 <!DOCTYPE html>
@@ -221,49 +233,91 @@ function displayProductCard($product) {
                     <button class="dot" onclick="currentSlide(3)"></button>
                 </div>
             </div>
+<?php
+// index.phpの商品セクション部分を以下のように変更
 
-            <?php if (isset($_SESSION['user_id']) && !empty($recent_products)): ?>
-                <h1 class="section-title">最近見たもの</h1>
-                <div id="history">
+// 最近見たもの
+if (isset($_SESSION['user_id']) && !empty($recent_products)): ?>
+    <div class="product-section">
+        <h1 class="section-title">最近見たもの</h1>
+        <div class="carousel-container">
+            <button class="carousel-nav prev" onclick="slideCarousel('history', -1)">❮</button>
+            <div class="carousel-wrapper">
+                <div id="history" class="carousel-track">
                     <?php foreach ($recent_products as $product): ?>
                         <?php displayProductCard($product); ?>
                     <?php endforeach; ?>
                 </div>
-            <?php elseif (isset($_SESSION['user_id'])): ?>
-                <h1 class="section-title">最近見たもの</h1>
-                <div class="no-products">
-                    まだ商品を閲覧していません。商品を見て回ってみましょう！
-                </div>
-            <?php endif; ?>
+            </div>
+            <button class="carousel-nav next" onclick="slideCarousel('history', 1)">❯</button>
+        </div>
+    </div>
+<?php elseif (isset($_SESSION['user_id'])): ?>
+    <div class="product-section">
+        <h1 class="section-title">最近見たもの</h1>
+        <div class="no-products">
+            まだ商品を閲覧していません。商品を見て回ってみましょう！
+        </div>
+    </div>
+<?php endif; ?>
 
-            <h1 class="section-title">おすすめ商品</h1>
-            <div id="recommend">
-                <?php if (!empty($recommended_products)): ?>
+<!-- おすすめ商品 -->
+<div class="product-section">
+    <h1 class="section-title">おすすめ商品</h1>
+    <?php if (!empty($recommended_products)): ?>
+        <div class="carousel-container">
+            <button class="carousel-nav prev" onclick="slideCarousel('recommend', -1)">❮</button>
+            <div class="carousel-wrapper">
+                <div id="recommend" class="carousel-track">
                     <?php foreach ($recommended_products as $product): ?>
                         <?php displayProductCard($product); ?>
                     <?php endforeach; ?>
-                <?php else: ?>
-                    <div class="no-products">現在おすすめ商品はありません</div>
-                <?php endif; ?>
+                </div>
             </div>
+            <button class="carousel-nav next" onclick="slideCarousel('recommend', 1)">❯</button>
+        </div>
+    <?php else: ?>
+        <div class="no-products">現在おすすめ商品はありません</div>
+    <?php endif; ?>
+</div>
 
-            <?php if (!empty($new_products)): ?>
-                <h1 class="section-title">新着アイテム</h1>
-                <div id="new-arrivals">
+<!-- 新着アイテム -->
+<?php if (!empty($new_products)): ?>
+    <div class="product-section">
+        <h1 class="section-title">新着アイテム</h1>
+        <div class="carousel-container">
+            <button class="carousel-nav prev" onclick="slideCarousel('new-arrivals', -1)">❮</button>
+            <div class="carousel-wrapper">
+                <div id="new-arrivals" class="carousel-track">
                     <?php foreach ($new_products as $product): ?>
                         <?php displayProductCard($product); ?>
                     <?php endforeach; ?>
                 </div>
-            <?php endif; ?>
+            </div>
+            <button class="carousel-nav next" onclick="slideCarousel('new-arrivals', 1)">❯</button>
+        </div>
+    </div>
+<?php endif; ?>
 
-            <?php if (!empty($sale_products)): ?>
-                <h1 class="section-title">セール商品</h1>
-                <div id="sale">
+<!-- セール商品 -->
+<?php if (!empty($sale_products)): ?>
+    <div class="product-section">
+        <h1 class="section-title">セール商品</h1>
+        <div class="carousel-container">
+            <button class="carousel-nav prev" onclick="slideCarousel('sale', -1)">❮</button>
+            <div class="carousel-wrapper">
+                <div id="sale" class="carousel-track">
                     <?php foreach ($sale_products as $product): ?>
                         <?php displayProductCard($product); ?>
                     <?php endforeach; ?>
                 </div>
-            <?php endif; ?>
+            </div>
+            <button class="carousel-nav next" onclick="slideCarousel('sale', 1)">❯</button>
+        </div>
+    </div>
+<?php endif; ?>
+
+
         </div>
     </main>
 
@@ -291,7 +345,8 @@ function displayProductCard($product) {
     </footer>
 
     <script src="../JavaScript/hamburger.js"></script>
-
     <script src="../JavaScript/slideshow.js"></script>
+    <script src="../JavaScript/carousel.js"></script>
+
 </body>
 </html>
