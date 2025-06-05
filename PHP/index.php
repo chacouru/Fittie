@@ -79,13 +79,19 @@ $stmt = $pdo->prepare("
 $stmt->execute();
 $new_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 商品カード関数（コンパクト版）
+// 商品カード関数
 function displayProductCard($product) {
-    $brand_name = $product['brand_name'] ?? 'no-brand';
-    $image_file = $product['image'] ?? 'no-image.jpg';
+    // ブランド名をトリムして不要な空白や改行を除去
+    $brand_name = isset($product['brand_name']) ? trim($product['brand_name']) : 'no-brand';
+
+    // ブランド名を使って安全なフォルダ名を生成
     $safe_brand_folder = preg_replace('/[^\w\-]/u', '_', $brand_name);
+
+    // 画像ファイル名とフォルダ名でパスを生成
+    $image_file = $product['image'] ?? 'no-image.png';
     $image_path = "../PHP/img/products/{$safe_brand_folder}/{$image_file}";
 
+    // セール情報処理
     $display_price = $product['price'];
     $sale_info = '';
     if ($product['is_on_sale'] && $product['sale_price'] && $product['sale_price'] > 0) {
@@ -94,6 +100,7 @@ function displayProductCard($product) {
         $sale_info = "<span class='original-price'>¥" . number_format($product['price']) . "</span><span class='sale-badge'>{$discount_rate}%OFF</span>";
     }
 
+    // 新着ラベルの判定（7日以内）
     $is_new = false;
     if (isset($product['created_at'])) {
         $created_date = new DateTime($product['created_at']);
@@ -102,9 +109,10 @@ function displayProductCard($product) {
         $is_new = $diff->days <= 7;
     }
 
+    // 出力
     echo "<div class='product-card' data-product-id='{$product['id']}'>";
     echo "<div class='product-image' onclick=\"window.location.href='./product_detail.php?id={$product['id']}'\">";
-    echo "<img src='{$image_path}' alt='{$product['name']}' onerror=\"this.src='../PHP/img/no-image.jpg'\">";
+    echo "<img src='{$image_path}' alt='{$product['name']}' onerror=\"this.src='../PHP/img/no-image.png'\">";
     if ($product['is_on_sale']) echo "<div class='sale-label'>SALE</div>";
     if ($is_new) echo "<div class='new-label'>NEW</div>";
     echo "</div>";
@@ -112,10 +120,13 @@ function displayProductCard($product) {
     echo "<div class='product-info'>";
     echo "<div class='product-brand'>{$brand_name}</div>";
     echo "<div class='product-price'><span class='current-price'>¥" . number_format($display_price) . "</span>{$sale_info}</div>";
-    
+
     displayCartButton($product['id'], $product['name'], $product['stock'], $product['price']);
     echo "</div></div>";
 }
+
+
+
 
 // カルーセル表示関数
 function displayProductCarousel($products, $section_id, $section_title) {
