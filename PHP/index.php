@@ -1,3 +1,5 @@
+
+
 <?php
 require_once __DIR__ . '/login_function/session.php';
 require_once 'cart_button.php'; // カートボタン用関数
@@ -124,6 +126,8 @@ function displayProductCard($product) {
     displayCartButton($product['id'], $product['name'], $product['stock'], $product['price']);
     echo "</div></div>";
 }
+
+
 
 
 
