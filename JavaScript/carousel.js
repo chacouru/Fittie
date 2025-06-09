@@ -1,203 +1,251 @@
-// carousel.js
+// カルーセル機能のJavaScript
 class ProductCarousel {
-    constructor(containerId) {
-        this.containerId = containerId;
-        this.track = document.getElementById(containerId);
-        this.cards = this.track.querySelectorAll('.product-card');
-        this.currentIndex = 0;
-        this.cardWidth = 280; // カード幅 + gap
-        this.cardsToShow = this.getCardsToShow();
-        this.maxIndex = Math.max(0, this.cards.length - this.cardsToShow);
+    constructor(carouselId) {
+        this.carousel = document.getElementById(carouselId);
+        this.track = this.carousel;
+        this.container = this.carousel.closest('.carousel-container');
+        this.prevBtn = this.container.querySelector('.carousel-nav.prev');
+        this.nextBtn = this.container.querySelector('.carousel-nav.next');
+        this.cardWidth = 300; // カード幅 + gap
+        this.scrollAmount = this.cardWidth * 2; // 一度に2枚分スクロール
         
         this.init();
-        this.updateNavButtons();
-        
-        // リサイズイベントリスナー
-        window.addEventListener('resize', () => {
-            this.handleResize();
-        });
     }
     
     init() {
-        // 初期位置設定
-        this.updateTransform();
+        // ボタンイベントの設定
+        if (this.prevBtn) {
+            this.prevBtn.addEventListener('click', () => this.scrollPrev());
+        }
+        if (this.nextBtn) {
+            this.nextBtn.addEventListener('click', () => this.scrollNext());
+        }
+        
+        // スクロールイベントでボタンの状態を更新
+        this.track.addEventListener('scroll', () => this.updateButtonStates());
+        
+        // 初期状態のボタン更新
+        this.updateButtonStates();
+        
+        // リサイズ時の対応
+        window.addEventListener('resize', () => this.handleResize());
+        
+        // タッチスワイプ対応
+        this.addTouchSupport();
     }
     
-    getCardsToShow() {
-        const containerWidth = this.track.parentElement.clientWidth;
-        if (window.innerWidth <= 480) {
-            return Math.floor(containerWidth / 220); // モバイル
-        } else if (window.innerWidth <= 768) {
-            return Math.floor(containerWidth / 260); // タブレット
-        } else {
-            return Math.floor(containerWidth / 300); // デスクトップ
-        }
+    scrollPrev() {
+        this.track.scrollBy({
+            left: -this.scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+    
+    scrollNext() {
+        this.track.scrollBy({
+            left: this.scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+    
+    updateButtonStates() {
+        if (!this.prevBtn || !this.nextBtn) return;
+        
+        const scrollLeft = this.track.scrollLeft;
+        const maxScroll = this.track.scrollWidth - this.track.clientWidth;
+        
+        // 左端にいる場合は前ボタンを無効化
+        this.prevBtn.disabled = scrollLeft <= 0;
+        
+        // 右端にいる場合は次ボタンを無効化
+        this.nextBtn.disabled = scrollLeft >= maxScroll - 1; // 1px の誤差を許容
     }
     
     handleResize() {
-        this.cardsToShow = this.getCardsToShow();
-        this.maxIndex = Math.max(0, this.cards.length - this.cardsToShow);
-        
-        // 現在のインデックスが範囲外の場合調整
-        if (this.currentIndex > this.maxIndex) {
-            this.currentIndex = this.maxIndex;
-        }
-        
-        this.updateTransform();
-        this.updateNavButtons();
-    }
-    
-    slide(direction) {
-        const newIndex = this.currentIndex + direction;
-        
-        if (newIndex >= 0 && newIndex <= this.maxIndex) {
-            this.currentIndex = newIndex;
-            this.updateTransform();
-            this.updateNavButtons();
-        }
-    }
-    
-    updateTransform() {
-        if (this.track) {
-            const translateX = -this.currentIndex * (this.getCardWidth() + 20); // 20pxはgap
-            this.track.style.transform = `translateX(${translateX}px)`;
-        }
-    }
-    
-    getCardWidth() {
-        if (window.innerWidth <= 480) {
-            return 200;
-        } else if (window.innerWidth <= 768) {
-            return 240;
+        // ウィンドウサイズ変更時にスクロール量を調整
+        const containerWidth = this.container.clientWidth;
+        if (containerWidth <= 480) {
+            this.cardWidth = 220; // モバイル用
+            this.scrollAmount = this.cardWidth * 1.5;
+        } else if (containerWidth <= 768) {
+            this.cardWidth = 260; // タブレット用
+            this.scrollAmount = this.cardWidth * 2;
         } else {
-            return 280;
+            this.cardWidth = 300; // デスクトップ用
+            this.scrollAmount = this.cardWidth * 2;
         }
+        
+        this.updateButtonStates();
     }
     
-    updateNavButtons() {
-        const container = this.track.closest('.carousel-container');
-        const prevBtn = container.querySelector('.carousel-nav.prev');
-        const nextBtn = container.querySelector('.carousel-nav.next');
+    addTouchSupport() {
+        let startX = 0;
+        let scrollLeft = 0;
+        let isDragging = false;
         
-        if (prevBtn && nextBtn) {
-            prevBtn.disabled = this.currentIndex <= 0;
-            nextBtn.disabled = this.currentIndex >= this.maxIndex;
-            
-            // スタイル更新
-            prevBtn.style.opacity = this.currentIndex <= 0 ? '0.3' : '1';
-            nextBtn.style.opacity = this.currentIndex >= this.maxIndex ? '0.3' : '1';
-        }
+        this.track.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].pageX - this.track.offsetLeft;
+            scrollLeft = this.track.scrollLeft;
+            isDragging = true;
+        });
+        
+        this.track.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.touches[0].pageX - this.track.offsetLeft;
+            const walk = (x - startX) * 2; // スクロール速度
+            this.track.scrollLeft = scrollLeft - walk;
+        });
+        
+        this.track.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+        
+        // マウスドラッグサポート（デスクトップ用）
+        this.track.addEventListener('mousedown', (e) => {
+            startX = e.pageX - this.track.offsetLeft;
+            scrollLeft = this.track.scrollLeft;
+            isDragging = true;
+            this.track.style.cursor = 'grabbing';
+        });
+        
+        this.track.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - this.track.offsetLeft;
+            const walk = (x - startX) * 2;
+            this.track.scrollLeft = scrollLeft - walk;
+        });
+        
+        this.track.addEventListener('mouseup', () => {
+            isDragging = false;
+            this.track.style.cursor = 'grab';
+        });
+        
+        this.track.addEventListener('mouseleave', () => {
+            isDragging = false;
+            this.track.style.cursor = 'grab';
+        });
     }
 }
 
-// カルーセルインスタンスを管理
-const carousels = {};
+// 従来のslideCarousel関数（互換性のため）
+function slideCarousel(carouselId, direction) {
+    const carousel = document.getElementById(carouselId);
+    if (!carousel) return;
+    
+    const cardWidth = 300;
+    const scrollAmount = cardWidth * 2 * direction;
+    
+    carousel.scrollBy({
+        left: scrollAmount,
+        behavior: 'smooth'
+    });
+}
 
-// カルーセル初期化関数
-function initCarousels() {
+// ページ読み込み完了時にカルーセルを初期化
+document.addEventListener('DOMContentLoaded', function() {
+    // 各カルーセルを初期化
     const carouselIds = ['history', 'recommend', 'new-arrivals', 'sale'];
     
     carouselIds.forEach(id => {
         const element = document.getElementById(id);
-        if (element && element.children.length > 0) {
-            carousels[id] = new ProductCarousel(id);
+        if (element) {
+            new ProductCarousel(id);
         }
     });
-}
+    
+    // キーボードナビゲーション
+    document.addEventListener('keydown', function(e) {
+        const focusedCarousel = document.querySelector('.carousel-track:focus-within');
+        if (!focusedCarousel) return;
+        
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            focusedCarousel.scrollBy({ left: -300, behavior: 'smooth' });
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            focusedCarousel.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+    });
+});
 
-// スライド関数（HTMLから呼び出される）
-function slideCarousel(carouselId, direction) {
-    if (carousels[carouselId]) {
-        carousels[carouselId].slide(direction);
+// スクロール位置を保存・復元する機能
+class ScrollPositionManager {
+    static save(carouselId) {
+        const carousel = document.getElementById(carouselId);
+        if (carousel) {
+            sessionStorage.setItem(`carousel-${carouselId}`, carousel.scrollLeft);
+        }
+    }
+    
+    static restore(carouselId) {
+        const carousel = document.getElementById(carouselId);
+        const savedPosition = sessionStorage.getItem(`carousel-${carouselId}`);
+        
+        if (carousel && savedPosition) {
+            carousel.scrollLeft = parseInt(savedPosition, 10);
+        }
+    }
+    
+    static clearAll() {
+        const keys = Object.keys(sessionStorage).filter(key => key.startsWith('carousel-'));
+        keys.forEach(key => sessionStorage.removeItem(key));
     }
 }
 
-// タッチイベント処理（スマートフォン対応）
-function addTouchSupport() {
-    Object.keys(carousels).forEach(id => {
-        const track = document.getElementById(id);
-        if (!track) return;
-        
-        let startX = 0;
-        let startY = 0;
-        let isScrolling = false;
-        
-        track.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            isScrolling = false;
-        }, { passive: true });
-        
-        track.addEventListener('touchmove', (e) => {
-            if (!startX || !startY) return;
-            
-            const diffX = Math.abs(e.touches[0].clientX - startX);
-            const diffY = Math.abs(e.touches[0].clientY - startY);
-            
-            if (diffY > diffX) {
-                isScrolling = true;
-            }
-        }, { passive: true });
-        
-        track.addEventListener('touchend', (e) => {
-            if (!startX || isScrolling) return;
-            
-            const endX = e.changedTouches[0].clientX;
-            const diff = startX - endX;
-            
-            if (Math.abs(diff) > 50) { // 50px以上のスワイプで反応
-                if (diff > 0) {
-                    slideCarousel(id, 1); // 右スワイプで次へ
-                } else {
-                    slideCarousel(id, -1); // 左スワイプで前へ
-                }
-            }
-            
-            startX = 0;
-            startY = 0;
-            isScrolling = false;
-        }, { passive: true });
+// ページ離脱時にスクロール位置を保存
+window.addEventListener('beforeunload', function() {
+    const carouselIds = ['history', 'recommend', 'new-arrivals', 'sale'];
+    carouselIds.forEach(id => {
+        ScrollPositionManager.save(id);
     });
-}
+});
 
-// キーボードナビゲーション
-function addKeyboardSupport() {
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-            const focusedCarousel = document.activeElement.closest('.carousel-container');
-            if (focusedCarousel) {
-                const carouselTrack = focusedCarousel.querySelector('.carousel-track');
-                const carouselId = carouselTrack.id;
-                
-                if (carousels[carouselId]) {
-                    e.preventDefault();
-                    const direction = e.key === 'ArrowLeft' ? -1 : 1;
-                    slideCarousel(carouselId, direction);
-                }
-            }
-        }
-    });
-}
-
-// ページ読み込み完了後に初期化
-document.addEventListener('DOMContentLoaded', () => {
-    // 少し遅延させて確実にDOM要素が準備されてから実行
+// ページ読み込み時にスクロール位置を復元
+window.addEventListener('load', function() {
     setTimeout(() => {
-        initCarousels();
-        addTouchSupport();
-        addKeyboardSupport();
+        const carouselIds = ['history', 'recommend', 'new-arrivals', 'sale'];
+        carouselIds.forEach(id => {
+            ScrollPositionManager.restore(id);
+        });
     }, 100);
 });
 
-// ウィンドウサイズ変更時の再計算
-window.addEventListener('resize', () => {
-    // デバウンス処理
-    clearTimeout(window.resizeTimeout);
-    window.resizeTimeout = setTimeout(() => {
-        Object.keys(carousels).forEach(id => {
-            if (carousels[id]) {
-                carousels[id].handleResize();
-            }
+// パフォーマンス最適化：Intersection Observer を使用した遅延読み込み
+class LazyImageLoader {
+    constructor() {
+        this.imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.classList.remove('lazy');
+                    observer.unobserve(img);
+                }
+            });
         });
-    }, 250);
+        
+        this.init();
+    }
+    
+    init() {
+        const lazyImages = document.querySelectorAll('img[data-src]');
+        lazyImages.forEach(img => this.imageObserver.observe(img));
+    }
+}
+
+// 遅延読み込みの初期化
+document.addEventListener('DOMContentLoaded', function() {
+    new LazyImageLoader();
 });
+
+// エクスポート（モジュール使用時）
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        ProductCarousel,
+        slideCarousel,
+        ScrollPositionManager,
+        LazyImageLoader
+    };
+}
