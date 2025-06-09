@@ -83,7 +83,7 @@ try {
             $stmt->execute([$user_id]);
             $count = $stmt->fetchColumn();
             
-            if ($count >= 5) {
+            if ($count >= 10) {
                 // 5件以上ある場合、最も古い履歴を削除
                 $stmt = $pdo->prepare("
                     DELETE FROM view_history 
