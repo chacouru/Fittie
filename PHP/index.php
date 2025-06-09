@@ -19,14 +19,10 @@ try {
 $recent_products = [];
 if (isset($_SESSION['user_id'])) {
     $stmt = $pdo->prepare("
-        SELECT DISTINCT p.*, c.name as category_name, b.name as brand_name, vh.viewed_at
-        FROM view_history vh
-        JOIN products p ON vh.product_id = p.id
-        LEFT JOIN categories c ON p.category_id = c.id
-        LEFT JOIN brands b ON p.brand_id = b.id
-        WHERE vh.user_id = ? AND p.is_active = 1
-        ORDER BY vh.viewed_at DESC
-        LIMIT 10
+        SELECT b.id, b.name 
+        FROM favorite_brands fb
+        JOIN brands b ON fb.brand_id = b.id
+        WHERE fb.user_id = ?
     ");
     $stmt->execute([$_SESSION['user_id']]);
     $recent_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -79,52 +75,102 @@ $stmt = $pdo->prepare("
 $stmt->execute();
 $new_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 商品カード関数
+// 2. 商品取得関数（JOINでブランド情報も取得）
+function getProductsWithBrands($pdo, $limit = null, $category_id = null) {
+    $sql = "SELECT 
+                p.*, 
+                b.name as brand_name,
+                b.folder_name as brand_folder
+            FROM products p 
+            LEFT JOIN brands b ON p.brand_id = b.id 
+            WHERE p.is_active = 1";
+    
+    if ($category_id) {
+        $sql .= " AND p.category_id = :category_id";
+    }
+    
+    $sql .= " ORDER BY p.created_at DESC";
+    
+    if ($limit) {
+        $sql .= " LIMIT :limit";
+    }
+    
+    $stmt = $pdo->prepare($sql);
+    
+    if ($category_id) {
+        $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
+    }
+    if ($limit) {
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+    }
+    
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// 3. 修正されたdisplayProductCard関数
 function displayProductCard($product) {
-    // ブランド名をトリムして不要な空白や改行を除去
-    $brand_name = isset($product['brand_name']) ? trim($product['brand_name']) : 'no-brand';
-
-    // ブランド名を使って安全なフォルダ名を生成
-    $safe_brand_folder = preg_replace('/[^\w\-]/u', '_', $brand_name);
-
-    // 画像ファイル名とフォルダ名でパスを生成
+    // データベースから取得したブランド情報を使用
+    $brand_name = 'default';
+    $safe_brand_folder = 'default';
+    
+    if (isset($product['brand_name']) && trim($product['brand_name']) !== '') {
+        $brand_name = trim($product['brand_name']);
+        // brand_folderがある場合はそれを使用、なければbrand_nameを使用
+        $safe_brand_folder = isset($product['brand_folder']) && trim($product['brand_folder']) !== '' 
+            ? trim($product['brand_folder']) 
+            : $brand_name;
+    }
+    
+    // 画像パス候補の構築
     $image_file = $product['image'] ?? 'no-image.png';
-    $image_path = "../PHP/img/products/{$safe_brand_folder}/{$image_file}";
-
-    // セール情報処理
+    $possible_paths = [
+        "../PHP/img/products/{$safe_brand_folder}/{$image_file}",
+        "../PHP/img/products/default/{$image_file}",
+        "../PHP/img/products/{$image_file}",
+        "../PHP/img/no-image.png"
+    ];
+    
+    $image_path = "../PHP/img/no-image.png";
+    foreach ($possible_paths as $path) {
+        if (file_exists($path)) {
+            $image_path = $path;
+            break;
+        }
+    }
+    
+    // 価格・セール処理
     $display_price = $product['price'];
     $sale_info = '';
-    if ($product['is_on_sale'] && $product['sale_price'] && $product['sale_price'] > 0) {
+    if ($product['is_on_sale'] && $product['sale_price'] > 0) {
         $display_price = $product['sale_price'];
         $discount_rate = round((($product['price'] - $product['sale_price']) / $product['price']) * 100);
-        $sale_info = "<span class='original-price'>¥" . number_format($product['price']) . "</span><span class='sale-badge'>{$discount_rate}%OFF</span>";
+        $sale_info = "<span class='original-price'>¥" . number_format($product['price']) . "</span>
+                      <span class='sale-badge'>{$discount_rate}%OFF</span>";
     }
-
-    // 新着ラベルの判定（7日以内）
+    
+    // 新着判定（7日以内）
     $is_new = false;
-    if (isset($product['created_at'])) {
+    if (!empty($product['created_at'])) {
         $created_date = new DateTime($product['created_at']);
-        $now = new DateTime();
-        $diff = $now->diff($created_date);
-        $is_new = $diff->days <= 7;
+        $is_new = (new DateTime())->diff($created_date)->days <= 7;
     }
-
-    // 出力
+    
+    // 商品カード出力
     echo "<div class='product-card' data-product-id='{$product['id']}'>";
     echo "<div class='product-image' onclick=\"window.location.href='./product_detail.php?id={$product['id']}'\">";
-    echo "<img src='{$image_path}' alt='{$product['name']}' onerror=\"this.src='../PHP/img/no-image.png'\">";
+    echo "<img src='{$image_path}' alt='" . htmlspecialchars($product['name']) . "'>";
+    
     if ($product['is_on_sale']) echo "<div class='sale-label'>SALE</div>";
     if ($is_new) echo "<div class='new-label'>NEW</div>";
     echo "</div>";
-
+    
     echo "<div class='product-info'>";
-    echo "<div class='product-brand'>{$brand_name}</div>";
+    echo "<div class='product-brand'>" . htmlspecialchars($brand_name) . "</div>";
     echo "<div class='product-price'><span class='current-price'>¥" . number_format($display_price) . "</span>{$sale_info}</div>";
-
     displayCartButton($product['id'], $product['name'], $product['stock'], $product['price']);
     echo "</div></div>";
 }
-
 
 
 
