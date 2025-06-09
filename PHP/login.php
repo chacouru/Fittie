@@ -11,7 +11,7 @@ if (isset($_SESSION['user_id'])) {
     $stmt = $pdo->prepare("
         SELECT b.id, b.name 
         FROM favorite_brands fb
-        JOIN brand b ON fb.brand_id = b.id
+        JOIN brands b ON fb.brand_id = b.id
         WHERE fb.user_id = ?
     ");
     $stmt->execute([$user_id]);
@@ -79,8 +79,6 @@ if (isset($_SESSION['user_id'])) {
     </nav>
 </div>
 <?php endif; ?>
-
-<div class="header_space"></div>
 <!-- headerここまで -->
     <div id="conteiner">
       <main>
