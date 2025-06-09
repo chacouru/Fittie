@@ -115,8 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['brand']) || isset($_GE
 </div>
 <?php endif; ?>
 
-<div class="header_space"></div>
-
 <!-- 検索フォーム -->
 <main>
     <form action="" method="get" class="form_box">
@@ -163,9 +161,9 @@ $searched = ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['brand']) || i
             <?php foreach ($results as $product): ?>
                 <?php
                 // 画像パス組み立て（ブランド名のフォルダに画像がある想定）
-                $brand_folder = htmlspecialchars($product['brand_name']);
-                $image_file = htmlspecialchars($product['image']);
-                $image_path = "../img/products/{$brand_folder}/{$image_file}";
+                $brand_folder = $product['brand_name'];
+                $image_file = $product['image'];
+                $image_path = "./img/products/" . rawurlencode($brand_folder) . "/" . rawurlencode($image_file);
                 ?>
                 <li>
                     <img src="<?= $image_path ?>" alt="<?= htmlspecialchars($product['name']) ?>" width="100">
