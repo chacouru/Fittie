@@ -15,22 +15,40 @@ try {
     die('データベース接続エラー: ' . $e->getMessage());
 }
 
-// 閲覧履歴商品
+// 閲覧履歴商品（修正版）
 $recent_products = [];
 if (isset($_SESSION['user_id'])) {
     $stmt = $pdo->prepare("
-        SELECT DISTINCT p.*, c.name as category_name, b.name as brand_name, vh.viewed_at
+        SELECT DISTINCT p.*, c.name as category_name, b.name as brand_name,
+               vh.viewed_at
         FROM view_history vh
         JOIN products p ON vh.product_id = p.id
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN brands b ON p.brand_id = b.id
-        WHERE vh.user_id = ? AND p.is_active = 1
+        WHERE vh.user_id = ? AND p.is_active = 1 AND p.stock > 0
         ORDER BY vh.viewed_at DESC
         LIMIT 10
     ");
     $stmt->execute([$_SESSION['user_id']]);
     $recent_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// 人気商品
+$stmt = $pdo->prepare("
+    SELECT p.*, c.name as category_name, b.name as brand_name,
+           COUNT(o.id) as order_count
+    FROM products p
+    LEFT JOIN categories c ON p.category_id = c.id
+    LEFT JOIN brands b ON p.brand_id = b.id
+    LEFT JOIN order_items oi ON p.id = oi.product_id
+    LEFT JOIN orders o ON oi.order_id = o.id
+    WHERE p.is_active = 1 AND p.stock > 0
+    GROUP BY p.id
+    ORDER BY order_count DESC
+    LIMIT 10
+");
+$stmt->execute();
+$popular_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // おすすめ
 $stmt = $pdo->prepare("
@@ -318,6 +336,24 @@ if (isset($_SESSION['user_id']) && !empty($recent_products)): ?>
         <h1 class="section-title">最近見たもの</h1>
         <div class="no-products">
             まだ商品を閲覧していません。商品を見て回ってみましょう！
+        </div>
+    </div>
+<?php endif; ?>
+
+<!-- 人気商品 -->
+<?php if (!empty($popular_products)): ?>
+    <div class="product-section">
+        <h1 class="section-title">人気商品</h1>
+        <div class="carousel-container">
+            <button class="carousel-nav prev" onclick="slideCarousel('popular', -1)">❮</button>
+            <div class="carousel-wrapper">
+                <div id="popular" class="carousel-track">
+                    <?php foreach ($popular_products as $product): ?>
+                        <?php displayProductCard($product); ?>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <button class="carousel-nav next" onclick="slideCarousel('popular', 1)">❯</button>
         </div>
     </div>
 <?php endif; ?>
