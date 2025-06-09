@@ -10,7 +10,7 @@ if (isset($_SESSION['user_id'])) {
     $stmt = $pdo->prepare("
         SELECT b.id, b.name 
         FROM favorite_brands fb
-        JOIN brands b ON fb.brand_id = b.id
+        JOIN brand b ON fb.brand_id = b.id
         WHERE fb.user_id = ?
     ");
     $stmt->execute([$user_id]);
