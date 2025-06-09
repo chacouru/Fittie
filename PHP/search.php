@@ -1,181 +1,210 @@
 <?php
 session_start();
-require_once 'db_connect.php'; // DB接続ファイルを読み込む
+require_once 'db_connect.php';
 
 $brands = [];
+$genres = [];
 $user_id = null;
 
-// ログインしている場合、お気に入りブランドを取得
+// 1. ログイン中ユーザーのお気に入りブランド取得
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
     $stmt = $pdo->prepare("
         SELECT b.id, b.name 
         FROM favorite_brands fb
-        JOIN brand b ON fb.brand_id = b.id
+        JOIN brands b ON fb.brand_id = b.id
         WHERE fb.user_id = ?
     ");
     $stmt->execute([$user_id]);
     $brands = $stmt->fetchAll(PDO::FETCH_ASSOC);
-}?>
-<!DOCTYPE html>
-<html lang="en">
+}
 
+// 2. ブランド一覧を取得（検索フォーム用）
+$stmt = $pdo->query("SELECT id, name FROM brands ORDER BY name ASC");
+$all_brands = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// 3. ジャンル一覧を取得（検索フォーム用）
+$stmt = $pdo->query("SELECT id, name FROM categories ORDER BY name ASC");
+$genres = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// 4. 検索処理
+$results = [];
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['brand']) || isset($_GET['genre']))) {
+    $conditions = [];
+    $params = [];
+
+    if (!empty($_GET['brand'])) {
+        $conditions[] = 'p.brand_id = ?';
+        $params[] = $_GET['brand'];
+    }
+
+    if (!empty($_GET['genre'])) {
+        $conditions[] = 'p.category_id = ?';
+        $params[] = $_GET['genre'];
+    }
+
+    $sql = "
+        SELECT p.*, b.name AS brand_name, c.name AS category_name
+        FROM products p
+        JOIN brands b ON p.brand_id = b.id
+        JOIN categories c ON p.category_id = c.id
+    ";
+
+    if (!empty($conditions)) {
+        $sql .= ' WHERE ' . implode(' AND ', $conditions);
+    }
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+?>
+
+<!DOCTYPE html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fitty. | 探す</title>
     <link rel="stylesheet" href="../CSS/reset.css">
     <link rel="stylesheet" href="../CSS/common.css">
     <link rel="stylesheet" href="../CSS/search.css">
 </head>
-
 <body>
-<!-- headerここから -->
+<!-- header -->
 <header class="header">
-    <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
+    <button class="menu_button" id="menuToggle" aria-label="メニューを開閉">
         <span class="bar"></span><span class="bar"></span><span class="bar"></span>
     </button>
     <div class="header_logo">
         <h1><a href="./index.php">fitty.</a></h1>
     </div>
-    <nav class="header_nav"> 
-            <nav class="header_nav"> <?php
-    if (isset($_SESSION['user_id'])) {
-        echo '<div class="login_logout_img">
-  <a href="logout.php">
-    <img src="./img/logout.jpg" alt="ログアウト">
-  </a>
-</div>
-';
-    } else {
-        echo '<div class="login_logout_img">
-  <a href="logout.php">
-    <img src="./img/login.png" alt="ログイン">
-  </a>
-</div>
-';
-    }?>
-        <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
-        <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
-        <a href="./search.php" class="icon-search" title="検索">🔍</a> 
-        <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a> 
+    <nav class="header_nav">
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <div class="login_logout_img">
+                <a href="logout.php"><img src="./img/logout.jpg" alt="ログアウト"></a>
+            </div>
+        <?php else: ?>
+            <div class="login_logout_img">
+                <a href="login.php"><img src="./img/login.png" alt="ログイン"></a>
+            </div>
+        <?php endif; ?>
+        <a href="./mypage.php">👤</a>
+        <a href="./cart.php">🛒</a>
+        <a href="./search.php">🔍</a>
+        <a href="./contact.php">✉️</a>
     </nav>
 </header>
 
+<!-- ハンバーガーメニュー -->
 <div class="backdrop" id="menuBackdrop"></div>
-
 <?php if ($user_id): ?>
-<div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
+<div class="menu_overlay" id="globalMenu" role="navigation">
     <nav>
         <?php if (!empty($brands)): ?>
             <?php foreach ($brands as $index => $brand): ?>
                 <a href="brand.php?id=<?= htmlspecialchars($brand['id']) ?>"
-                   role="menuitem"
                    class="bland"
                    style="--index: <?= $index ?>; top: <?= 75 + $index * 50 ?>px; left: <?= 170 - $index * 60 ?>px;">
                     <?= htmlspecialchars($brand['name']) ?>
                 </a>
             <?php endforeach; ?>
         <?php else: ?>
-            <p style="padding: 10px; margin-top:65px;">お気に入りのブランドが登録されていません。</p>
+            <p style="padding: 10px;">お気に入りのブランドが登録されていません。</p>
         <?php endif; ?>
     </nav>
 </div>
 <?php endif; ?>
 
 <div class="header_space"></div>
-<!-- headerここまで -->
 
-<div class="backdrop" id="menuBackdrop"></div>
+<!-- 検索フォーム -->
+<main>
+    <form action="" method="get" class="form_box">
+        <h1>探す</h1>
+        <div class="form_container">
+            <div class="select_container">
+                <select name="brand" required>
+                    <option value="" selected disabled hidden>ブランド</option>
+                    <?php foreach ($all_brands as $brand_option): ?>
+                        <option value="<?= htmlspecialchars($brand_option['id']) ?>"
+                            <?= (isset($_GET['brand']) && $_GET['brand'] == $brand_option['id']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($brand_option['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="select_container">
+                <select name="genre" required>
+                    <option value="" selected disabled hidden>ジャンル</option>
+                    <?php foreach ($genres as $genre_option): ?>
+                        <option value="<?= htmlspecialchars($genre_option['id']) ?>"
+                            <?= (isset($_GET['genre']) && $_GET['genre'] == $genre_option['id']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($genre_option['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        <div class="button_container">
+            <button type="submit">この条件で探す</button>
+            <input type="reset" value="リセット" onclick="window.location='search.php'">
+        </div>
+    </form>
 
-<?php if (isset($_SESSION['user_id'])): ?>
-<div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
-  <nav>
-    <?php if (!empty($brands)): ?>
-      <?php foreach ($brands as $index => $brand): ?>
-        <a href="brand.php?id=<?= htmlspecialchars($brand['id']) ?>"
-           role="menuitem"
-           class="bland"
-           style="--index: <?= $index ?>; top: <?= 75 + $index * 50 ?>px; left: <?= 170 - $index * 60 ?>px;">
-          <?= htmlspecialchars($brand['name']) ?>
-        </a>
-      <?php endforeach; ?>
-    <?php else: ?>
-      <p style="padding: 10px;">お気に入りのブランドが登録されていません。</p>
-    <?php endif; ?>
-  </nav>
-</div>
+<?php
+$searched = ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['brand']) || isset($_GET['genre'])));
+?>
+
+<!-- 検索結果表示 -->
+<?php if (!empty($results)): ?>
+    <section class="results">
+        <h2>検索結果</h2>
+        <ul>
+            <?php foreach ($results as $product): ?>
+                <?php
+                // 画像パス組み立て（ブランド名のフォルダに画像がある想定）
+                $brand_folder = htmlspecialchars($product['brand_name']);
+                $image_file = htmlspecialchars($product['image']);
+                $image_path = "../img/products/{$brand_folder}/{$image_file}";
+                ?>
+                <li>
+                    <img src="<?= $image_path ?>" alt="<?= htmlspecialchars($product['name']) ?>" width="100">
+                    <p>商品名：<?= htmlspecialchars($product['name']) ?></p>
+                    <p>ブランド：<?= htmlspecialchars($product['brand_name']) ?></p>
+                    <p>ジャンル：<?= htmlspecialchars($product['category_name']) ?></p>
+                    <p>価格：<?= htmlspecialchars($product['price']) ?>円</p>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </section>
+<?php elseif ($searched): ?>
+    <p>該当する商品は見つかりませんでした。</p>
 <?php endif; ?>
 
-<div class="header_space"></div>
-  <!-- headerここまで -->
+</main>
 
-    <main>
-        <form action="" class="form_box">
-            <h1>探す</h1>
-        <div class="form_container">
-        <div class="select_container">
-            <select name="brand">
-                <option value="" selected disabled hidden>ブランド</option>
-                <option value="1">Woven Whisper</option>
-                <option value="2">Lush Loom</option>
-                <option value="3">Velvet Verse</option>
-                <option value="4">Urban Threads</option>
-                <option value="5">Chic Beacon</option>
-                <option value="6">Fad Fizz</option>
-                <option value="7">ADOOR</option>
-                <option value="8">KARAQURI</option>
-                <option value="9">FAR-EAST</option>
-                <option value="10">ON°</option>
-            </select>
-        </div>
-        <div class="select_container">
-            <select name="color">
-                <option value="" selected disabled hidden>カラー</option>
-                <option value="1">ブラック</option>
-                <option value="2">ホワイト</option>
-                <option value="3">レッド</option>
-            </select>
-        </div>
-        <div class="select_container">
-            <select name="genre">
-                <option value="" selected disabled hidden>ジャンル</option>
-                <option value="1">トップス</option>
-                <option value="2">パンツ</option>
-                <option value="3">シューズ</option>
-            </select>
-        </div>
-        </div>
-         <div class="button_container">
-             <button type="submit">この条件で探す</button>
-             <input type="reset" value="リセット">
-          </div>
-          </form>
-    </main>
-
+<!-- footer -->
 <footer class="footer">
     <div class="footer_container">
-      <a href="index.php">
-        <div class="footer_logo">
-          <h2>fitty.</h2>
+        <a href="index.php">
+            <div class="footer_logo"><h2>fitty.</h2></div>
+        </a>
+        <div class="footer_links">
+            <a href="./overview.php">会社概要</a>
+            <a href="./terms.php">利用規約</a>
+            <a href="./privacy.php">プライバシーポリシー</a>
         </div>
-      </a>
-      <div class="footer_links">
-        <a href="./overview.php">会社概要</a>
-        <a href="./terms.php">利用規約</a>
-        <a href="./privacy.php">プライバシーポリシー</a>
-      </div>
-      <div class="footer_sns">
-        <a href="#" aria-label="Twitter"><img src="icons/twitter.svg" alt="Twitter"></a>
-        <a href="#" aria-label="Instagram"><img src="icons/instagram.svg" alt="Instagram"></a>
-        <a href="#" aria-label="Facebook"><img src="icons/facebook.svg" alt="Facebook"></a>
-      </div>
-      <div class="footer_copy">
-        <small>&copy; 2025 Fitty All rights reserved.</small>
-      </div>
+        <div class="footer_sns">
+            <a href="#"><img src="icons/twitter.svg" alt="Twitter"></a>
+            <a href="#"><img src="icons/instagram.svg" alt="Instagram"></a>
+            <a href="#"><img src="icons/facebook.svg" alt="Facebook"></a>
+        </div>
+        <div class="footer_copy">
+            <small>&copy; 2025 Fitty All rights reserved.</small>
+        </div>
     </div>
-  </footer>
-  <!-- footer -->
-</body>
+</footer>
+
 <script src="../JavaScript/hamburger.js"></script>
+</body>
 </html>
