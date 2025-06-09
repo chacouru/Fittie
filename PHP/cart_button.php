@@ -1,229 +1,368 @@
 <?php
-// 必要なファイルを読み込み
-require_once __DIR__ . '/DbManager.php';
-require_once __DIR__ . '/Encode.php';
-
-// セッションが開始されていない場合は開始
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-// ログインチェック関数
-function isLoggedIn() {
-    return isset($_SESSION['user_id']);
-}
-
-// カートに商品を追加する処理
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add_to_cart') {
-    header('Content-Type: application/json');
-    
+// カートボタン表示用の関数
+function displayCartButton($product_id, $product_name, $stock, $price, $show_quantity = true) {
     // ログインチェック
-    if (!isLoggedIn()) {
-        echo json_encode(['success' => false, 'message' => 'ログインが必要です']);
-        exit;
+    if (!isset($_SESSION['user_id'])) {
+        echo '<button class="cart-btn login-required" onclick="requireLogin()">カートに追加</button>';
+        return;
     }
     
-    $user_id = $_SESSION['user_id'];
-    $product_id = intval($_POST['product_id']);
-    $quantity = intval($_POST['quantity']) ?: 1;
+    // 在庫チェック
+    if ($stock <= 0) {
+        echo '<button class="cart-btn out-of-stock" disabled>在庫切れ</button>';
+        return;
+    }
     
-    try {
-        // データベース接続
-        $pdo = getDb();
-        
-        // 商品の在庫チェック
-        $stmt = $pdo->prepare("SELECT stock, name FROM products WHERE id = ? AND is_active = 1");
-        $stmt->execute([$product_id]);
-        $product = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if (!$product) {
-            echo json_encode(['success' => false, 'message' => '商品が見つかりません']);
-            exit;
+    echo '<div class="cart-button-container">';
+    if ($show_quantity) {
+        echo '<div class="quantity-selector">';
+        echo '<button type="button" class="quantity-btn minus" onclick="changeQuantity(' . $product_id . ', -1)">-</button>';
+        echo '<input type="number" id="quantity-' . $product_id . '" class="quantity-input" value="1" min="1" max="' . $stock . '">';
+        echo '<button type="button" class="quantity-btn plus" onclick="changeQuantity(' . $product_id . ', 1)">+</button>';
+        echo '</div>';
+    }
+    echo '<button class="cart-btn add-to-cart" onclick="addToCart(' . $product_id . ', \'' . htmlspecialchars($product_name, ENT_QUOTES) . '\', ' . $price . ', ' . ($show_quantity ? 'true' : 'false') . ')">';
+    echo '<span class="cart-icon">🛒</span>';
+    echo '<span class="cart-text">カートに追加</span>';
+    echo '</button>';
+    echo '</div>';
+}
+
+// カートボタン用のCSS
+function getCartButtonCSS() {
+    return '
+    <style>
+        .cart-button-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
         }
         
-        if ($product['stock'] < $quantity) {
-            echo json_encode(['success' => false, 'message' => '在庫が不足しています']);
-            exit;
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
         }
         
-        // 既にカートに同じ商品があるかチェック
-        $stmt = $pdo->prepare("SELECT id, quantity FROM cart_items WHERE user_id = ? AND product_id = ?");
-        $stmt->execute([$user_id, $product_id]);
-        $existing_item = $stmt->fetch(PDO::FETCH_ASSOC);
+        .quantity-btn {
+            background: #f8f9fa;
+            border: none;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
         
-        if ($existing_item) {
-            // 既存の商品の数量を更新
-            $new_quantity = $existing_item['quantity'] + $quantity;
-            if ($new_quantity > $product['stock']) {
-                echo json_encode(['success' => false, 'message' => '在庫を超える数量は追加できません']);
-                exit;
+        .quantity-btn:hover:not(:disabled) {
+            background: #e9ecef;
+        }
+        
+        .quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .quantity-input {
+            border: none;
+            width: 50px;
+            height: 30px;
+            text-align: center;
+            font-size: 14px;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+        
+        .quantity-input:focus {
+            outline: none;
+            background: #f8f9fa;
+        }
+        
+        .cart-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .cart-btn:hover:not(:disabled) {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+        
+        .cart-btn.login-required {
+            background: #6c757d;
+        }
+        
+        .cart-btn.login-required:hover {
+            background: #545b62;
+        }
+        
+        .cart-btn.out-of-stock {
+            background: #dc3545;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .cart-btn.adding {
+            background: #28a745;
+            pointer-events: none;
+        }
+        
+        .cart-icon {
+            font-size: 16px;
+        }
+        
+        .cart-text {
+            font-weight: 500;
+        }
+        
+        /* 商品カード内でのスタイル調整 */
+        .product-card .cart-button-container {
+            margin-top: auto;
+            padding-top: 10px;
+        }
+        
+        .product-card .cart-btn {
+            width: 100%;
+            justify-content: center;
+            padding: 10px 16px;
+        }
+        
+        .product-card .quantity-selector {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        
+        .product-card .quantity-input {
+            flex: 1;
+        }
+        
+        /* レスポンシブ対応 */
+        @media (max-width: 768px) {
+            .cart-button-container {
+                flex-direction: column;
+                gap: 8px;
             }
             
-            $stmt = $pdo->prepare("UPDATE cart_items SET quantity = ? WHERE id = ?");
-            $stmt->execute([$new_quantity, $existing_item['id']]);
-        } else {
-            // 新しい商品をカートに追加
-            $stmt = $pdo->prepare("INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, ?)");
-            $stmt->execute([$user_id, $product_id, $quantity]);
-        }
-        
-        // カート内の商品数を取得
-        $stmt = $pdo->prepare("SELECT SUM(quantity) as total_items FROM cart_items WHERE user_id = ?");
-        $stmt->execute([$user_id]);
-        $cart_total = $stmt->fetch(PDO::FETCH_ASSOC)['total_items'] ?: 0;
-        
-        echo json_encode([
-            'success' => true, 
-            'message' => 'カートに追加しました',
-            'cart_total' => $cart_total
-        ]);
-        
-    } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'message' => 'エラーが発生しました']);
-    }
-    exit;
-}
-
-// カートボタンを表示する関数
-function displayCartButton($product_id, $product_name, $stock, $price) {
-    $is_logged_in = isLoggedIn();
-    $button_class = $stock > 0 ? 'cart-btn-active' : 'cart-btn-disabled';
-    $button_text = $stock > 0 ? 'カートに入れる' : '在庫切れ';
-    $disabled = $stock <= 0 ? 'disabled' : '';
-    
-    echo '
-    <div class="cart-section">
-        <div class="quantity-selector" ' . ($stock <= 0 ? 'style="display:none;"' : '') . '>
-            <label for="quantity-' . $product_id . '">数量:</label>
-            <select id="quantity-' . $product_id . '" class="quantity-select">
-                ' . generateQuantityOptions($stock) . '
-            </select>
-        </div>
-        
-        <button 
-            class="cart-button ' . $button_class . '" 
-            data-product-id="' . $product_id . '"
-            data-product-name="' . e($product_name) . '"
-            data-price="' . $price . '"
-            ' . $disabled . '
-            ' . (!$is_logged_in ? 'data-login-required="true"' : '') . '
-        >
-           
-            <span class="button-text">' . $button_text . '</span>
-        </button>
-    </div>
-    
-    <!-- 成功/エラーメッセージ表示エリア -->
-    <div id="cart-message-' . $product_id . '" class="cart-message" style="display:none;"></div>
-    ';
-}
-
-// 数量選択オプションを生成
-function generateQuantityOptions($stock, $max = 10) {
-    $options = '';
-    $limit = min($stock, $max);
-    for ($i = 1; $i <= $limit; $i++) {
-        $options .= '<option value="' . $i . '">' . $i . '</option>';
-    }
-    return $options;
-}
-?>
-
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // カートボタンのクリックイベント
-    document.querySelectorAll('.cart-button').forEach(button => {
-        button.addEventListener('click', function() {
-            // ログインチェック
-            if (this.hasAttribute('data-login-required')) {
-                alert('カートに商品を追加するにはログインが必要です。');
-                // ログインページにリダイレクト（適切なURLに変更してください）
-                window.location.href = 'login.php';
-                return;
+            .quantity-selector {
+                width: 100%;
             }
             
-            // 無効化されているボタンのクリックを無視
-            if (this.disabled) return;
+            .cart-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>';
+}
+
+// カートボタン用のJavaScript
+function getCartButtonJS() {
+    return '
+    <script>
+        // 数量変更
+        function changeQuantity(productId, change) {
+            const input = document.getElementById("quantity-" + productId);
+            if (!input) return;
             
-            const productId = this.dataset.productId;
-            const productName = this.dataset.productName;
-            const quantitySelect = document.getElementById('quantity-' + productId);
-            const quantity = quantitySelect ? quantitySelect.value : 1;
-            const messageDiv = document.getElementById('cart-message-' + productId);
+            let newValue = parseInt(input.value) + change;
+            const min = parseInt(input.min);
+            const max = parseInt(input.max);
             
-            // ローディング状態にする
-            this.classList.add('loading');
-            this.disabled = true;
+            if (newValue < min) newValue = min;
+            if (newValue > max) newValue = max;
             
-            // AJAX でカートに追加
-            const formData = new FormData();
-            formData.append('action', 'add_to_cart');
-            formData.append('product_id', productId);
-            formData.append('quantity', quantity);
+            input.value = newValue;
             
-            fetch(window.location.href, {
-                method: 'POST',
-                body: formData
+            // ボタンの状態更新
+            updateQuantityButtons(productId);
+        }
+        
+        // 数量ボタンの状態更新
+        function updateQuantityButtons(productId) {
+            const input = document.getElementById("quantity-" + productId);
+            if (!input) return;
+            
+            const container = input.closest(".quantity-selector");
+            const minusBtn = container.querySelector(".quantity-btn.minus");
+            const plusBtn = container.querySelector(".quantity-btn.plus");
+            
+            const value = parseInt(input.value);
+            const min = parseInt(input.min);
+            const max = parseInt(input.max);
+            
+            minusBtn.disabled = value <= min;
+            plusBtn.disabled = value >= max;
+        }
+        
+        // カートに追加
+        function addToCart(productId, productName, price, hasQuantity) {
+            let quantity = 1;
+            
+            if (hasQuantity) {
+                const quantityInput = document.getElementById("quantity-" + productId);
+                if (quantityInput) {
+                    quantity = parseInt(quantityInput.value);
+                }
+            }
+            
+            const button = event.target.closest(".cart-btn");
+            const originalText = button.innerHTML;
+            
+            // ボタンの状態変更
+            button.classList.add("adding");
+            button.innerHTML = "<span class=\"cart-icon\">⏳</span><span class=\"cart-text\">追加中...</span>";
+            
+            // Ajax リクエスト
+            fetch("add_to_cart.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `product_id=${productId}&quantity=${quantity}`
             })
             .then(response => response.json())
             .then(data => {
-                // ローディング状態を解除
-                this.classList.remove('loading');
-                this.disabled = false;
-                
-                // メッセージを表示
-                messageDiv.textContent = data.message;
-                messageDiv.className = 'cart-message ' + (data.success ? 'success' : 'error');
-                messageDiv.style.display = 'block';
-                
                 if (data.success) {
-                    // カート数量を更新（ヘッダーなどにカート数を表示している場合）
-                    updateCartCount(data.cart_total);
+                    // 成功時
+                    button.innerHTML = "<span class=\"cart-icon\">✓</span><span class=\"cart-text\">追加完了</span>";
                     
-                    // 成功時のアニメーション効果
-                    this.style.transform = 'scale(0.95)';
+                    // 成功メッセージ表示
+                    showNotification(`${productName} をカートに追加しました`, "success");
+                    
+                    // 2秒後に元に戻す
                     setTimeout(() => {
-                        this.style.transform = 'scale(1)';
-                    }, 150);
+                        button.classList.remove("adding");
+                        button.innerHTML = originalText;
+                    }, 2000);
+                } else {
+                    // エラー時
+                    button.classList.remove("adding");
+                    button.innerHTML = originalText;
+                    showNotification(data.message || "カートへの追加に失敗しました", "error");
                 }
-                
-                // メッセージを3秒後に非表示
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 3000);
             })
             .catch(error => {
-                console.error('Error:', error);
-                this.classList.remove('loading');
-                this.disabled = false;
+                console.error("Error:", error);
+                button.classList.remove("adding");
+                button.innerHTML = originalText;
+                showNotification("カートへの追加に失敗しました", "error");
+            });
+        }
+        
+        // ログインが必要な場合
+        function requireLogin() {
+            if (confirm("カートに商品を追加するにはログインが必要です。ログインページに移動しますか？")) {
+                window.location.href = "login.php";
+            }
+        }
+        
+        // 通知表示
+        function showNotification(message, type) {
+            // 既存の通知があれば削除
+            const existingNotification = document.querySelector(".notification");
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            const notification = document.createElement("div");
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <span class="notification-message">${message}</span>
+                <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 3秒後に自動削除
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+        
+        // 数量入力の直接変更対応
+        document.addEventListener("DOMContentLoaded", function() {
+            const quantityInputs = document.querySelectorAll(".quantity-input");
+            quantityInputs.forEach(input => {
+                input.addEventListener("input", function() {
+                    const productId = this.id.replace("quantity-", "");
+                    updateQuantityButtons(productId);
+                });
                 
-                messageDiv.textContent = 'エラーが発生しました。もう一度お試しください。';
-                messageDiv.className = 'cart-message error';
-                messageDiv.style.display = 'block';
-                
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 3000);
+                // 初期状態のボタン更新
+                const productId = input.id.replace("quantity-", "");
+                updateQuantityButtons(productId);
             });
         });
-    });
-});
-
-// カート数量を更新する関数（ヘッダーのカートアイコンなどで使用）
-function updateCartCount(count) {
-    const cartCountElements = document.querySelectorAll('.cart-count, #cart-count');
-    cartCountElements.forEach(element => {
-        element.textContent = count;
-        if (count > 0) {
-            element.style.display = 'inline';
+    </script>
+    
+    <style>
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 250px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
         }
-    });
+        
+        .notification.success {
+            background: #28a745;
+        }
+        
+        .notification.error {
+            background: #dc3545;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>';
 }
-</script>
-
-<?php
-// 使用例：商品詳細ページや商品一覧ページで使用
-// require_once 'cart_button.php';
-// displayCartButton($product['id'], $product['name'], $product['stock'], $product['price']);
 ?>
