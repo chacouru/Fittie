@@ -10,13 +10,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
         $count = 0;
 
         while (($row = fgetcsv($handle)) !== false) {
-            if (count($row) < 6) continue;
-            [$name, $description, $price, $category_id, $stock, $is_on_sale, $sale_price] = array_pad($row, 7, null);
+            if (count($row) < 7) continue;
+            
+            // カラム順: 商品名,説明,価格,カテゴリID,在庫,ブランドID,画像ファイル名
+            [$name, $description, $price, $category_id, $stock, $brand_id, $image] = array_pad($row, 7, null);
+
+            // 必要に応じて型変換
+            $price = (int)$price;
+            $category_id = (int)$category_id;
+            $stock = (int)$stock;
+            $brand_id = (int)$brand_id;
 
             $stmt = $pdo->prepare("INSERT INTO products 
-                (name, description, price, category_id, stock, is_on_sale, sale_price) 
+                (name, description, price, category_id, stock, brand_id, image) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$name, $description, $price, $category_id, $stock, $is_on_sale, $sale_price]);
+            $stmt->execute([$name, $description, $price, $category_id, $stock, $brand_id, $image]);
+
             $count++;
         }
 
