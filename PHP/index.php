@@ -19,10 +19,14 @@ try {
 $recent_products = [];
 if (isset($_SESSION['user_id'])) {
     $stmt = $pdo->prepare("
-        SELECT b.id, b.name 
-        FROM favorite_brands fb
-        JOIN brands b ON fb.brand_id = b.id
-        WHERE fb.user_id = ?
+        SELECT DISTINCT p.*, c.name as category_name, b.name as brand_name, vh.viewed_at
+        FROM view_history vh
+        JOIN products p ON vh.product_id = p.id
+        LEFT JOIN categories c ON p.category_id = c.id
+        LEFT JOIN brands b ON p.brand_id = b.id
+        WHERE vh.user_id = ? AND p.is_active = 1
+        ORDER BY vh.viewed_at DESC
+        LIMIT 10
     ");
     $stmt->execute([$_SESSION['user_id']]);
     $recent_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
