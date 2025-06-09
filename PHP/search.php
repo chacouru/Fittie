@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db_connect.php';
+require_once 'cart_button.php'; // cart_button.php読み込み
 
 $brands = [];
 $genres = [];
@@ -43,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['brand']) || isset($_GE
         $params[] = $_GET['genre'];
     }
 
+    // 在庫数(stock)も取得
     $sql = "
         SELECT p.*, b.name AS brand_name, c.name AS category_name
         FROM products p
@@ -160,18 +162,24 @@ $searched = ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['brand']) || i
         <ul>
             <?php foreach ($results as $product): ?>
                 <?php
-                // 画像パス組み立て（ブランド名のフォルダに画像がある想定）
                 $brand_folder = $product['brand_name'];
                 $image_file = $product['image'];
                 $image_path = "./img/products/" . rawurlencode($brand_folder) . "/" . rawurlencode($image_file);
+
+                $stock = isset($product['stock']) ? (int)$product['stock'] : 10; // stockカラムが無ければ10固定
                 ?>
-                <li>
-                    <img src="<?= $image_path ?>" alt="<?= htmlspecialchars($product['name']) ?>" width="100">
-                    <p>商品名：<?= htmlspecialchars($product['name']) ?></p>
-                    <p>ブランド：<?= htmlspecialchars($product['brand_name']) ?></p>
-                    <p>ジャンル：<?= htmlspecialchars($product['category_name']) ?></p>
-                    <p>価格：<?= htmlspecialchars($product['price']) ?>円</p>
-                </li>
+<li>
+    <a href="product_detail.php?id=<?= $product['id'] ?>">
+        <img src="<?= $image_path ?>" alt="<?= htmlspecialchars($product['name']) ?>" width="100">
+        <p>商品名：<?= htmlspecialchars($product['name']) ?></p>
+    </a>
+    <p>ブランド：<?= htmlspecialchars($product['brand_name']) ?></p>
+    <p>ジャンル：<?= htmlspecialchars($product['category_name']) ?></p>
+    <p>価格：<?= htmlspecialchars($product['price']) ?>円</p>
+
+    <!-- カート追加ボタン -->
+    <?php displayCartButton($product['id'], $product['name'], $stock, $product['price']); ?>
+</li>
             <?php endforeach; ?>
         </ul>
     </section>
