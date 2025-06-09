@@ -1,222 +1,248 @@
-'use strict';
+/**
+ * カートページのJavaScript
+ * APIからカート情報を取得して表示、操作を処理
+ */
 
-window.addEventListener('DOMContentLoaded', async function () {
-    const container = document.getElementById('cart_items_container');
-    const cartTitle = document.getElementById('cart_title');
-    const totalPrice = document.querySelector('.total_price');
-    const checkoutBtn = document.querySelector('.checkout_btn');
-    let cartItems = [];
+class CartManager {
+    constructor() {
+        this.cartItems = [];
+        this.init();
+    }
 
-    // カートアイテムを読み込み
-    await loadCartItems();
+    async init() {
+        await this.loadCart();
+        this.bindEvents();
+    }
 
-    // レジに進むボタンのイベントリスナー
-    checkoutBtn.addEventListener('click', handleCheckout);
-
-    async function loadCartItems() {
+    async loadCart() {
         try {
-            const res = await fetch('./api/get_cart_items.php');
+            const response = await fetch('cart_api.php');
+            const data = await response.json();
             
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
+            if (data.success) {
+                this.cartItems = data.items;
+                this.renderCart();
+            } else {
+                this.showError('カート情報の取得に失敗しました');
             }
-            
-            cartItems = await res.json();
-            console.log('Cart items loaded:', cartItems);
-
-            renderCartItems();
-            updateCartTitle();
-            updateTotal();
-        } catch (err) {
-            container.innerHTML = '<div class="empty_cart"><p>カートの読み込みに失敗しました。</p></div>';
-            console.error('Cart loading error:', err);
+        } catch (error) {
+            console.error('Error loading cart:', error);
+            this.showError('カート情報の取得中にエラーが発生しました');
         }
     }
 
-    function renderCartItems() {
-        container.innerHTML = '';
-        
-        if (cartItems.length === 0) {
-            container.innerHTML = `
-                <div class="empty_cart">
-                    <p>カートに商品がありません。</p>
-                    <a href="./toppage.php" class="continue_shopping">ショッピングを続ける</a>
+    renderCart() {
+        const loadingEl = document.getElementById('loading');
+        const emptyCartEl = document.getElementById('empty-cart');
+        const cartItemsEl = document.getElementById('cart-items');
+        const cartSummaryEl = document.getElementById('cart-summary');
+        const cartTitleEl = document.getElementById('cart-title');
+
+        // ローディング非表示
+        loadingEl.style.display = 'none';
+
+        if (this.cartItems.length === 0) {
+            // 空のカート
+            emptyCartEl.style.display = 'block';
+            cartItemsEl.style.display = 'none';
+            cartSummaryEl.style.display = 'none';
+            cartTitleEl.textContent = 'カートに入っている商品：0点';
+        } else {
+            // カート商品表示
+            emptyCartEl.style.display = 'none';
+            cartItemsEl.style.display = 'block';
+            cartSummaryEl.style.display = 'block';
+            
+            const totalItems = this.cartItems.reduce((sum, item) => sum + parseInt(item.quantity), 0);
+            cartTitleEl.textContent = `カートに入っている商品：${totalItems}点`;
+            
+            this.renderCartItems();
+            this.updateTotal();
+        }
+    }
+
+    renderCartItems() {
+        const cartItemsEl = document.getElementById('cart-items');
+        cartItemsEl.innerHTML = '';
+
+        this.cartItems.forEach(item => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'cart-item';
+            itemEl.dataset.cartId = item.id;
+            itemEl.dataset.stock = item.stock;
+
+            itemEl.innerHTML = `
+                <div class="item-image">
+                    <img src="${item.image_path}" 
+                         alt="${this.escapeHtml(item.name)}" 
+                         onerror="this.src='img/products/no-image.png';">
+                </div>
+                
+                <div class="item-details">
+                    <div class="item-brand">
+                        ${this.escapeHtml(item.brand_name || 'ブランド名なし')}
+                    </div>
+                    <div class="item-name">
+                        ${this.escapeHtml(item.name)}
+                    </div>
+                    <div class="item-size">
+                        サイズ：FREE
+                    </div>
+                    <div class="item-price">
+                        ¥${this.formatPrice(item.price)}
+                    </div>
+                </div>
+                
+                <div class="item-actions">
+                    <button class="delete-btn" data-cart-id="${item.id}">削除</button>
+                    <div class="quantity-controls">
+                        <span class="quantity-label">数量</span>
+                        <button class="quantity-btn decrease" data-cart-id="${item.id}">−</button>
+                        <span class="quantity-display">${item.quantity}</span>
+                        <button class="quantity-btn increase" data-cart-id="${item.id}">＋</button>
+                    </div>
                 </div>
             `;
-            checkoutBtn.disabled = true;
-            return;
-        }
-        
-        cartItems.forEach(item => {
-            const imagePath = `../PHP/img/products/${item.brand_name}/${item.image}`;
-            
-            const cartItemHTML = `
-                <div class="cart_item" data-item-id="${item.id}">
-                    <div class="item_image">
-                        <img src="${imagePath}" alt="${item.name}" 
-                             onerror="this.src='../img/products/default.jpg';">
-                    </div>
-                    <div class="item_details">
-                        <div class="item_brand">${item.brand_name}</div>
-                        <div class="item_name">${item.name}</div>
-                        <div class="item_size">サイズ: FREE</div>
-                        <div class="item_price">¥${item.price.toLocaleString()}</div>
-                        <div class="quantity_controls">
-                            <span class="quantity_label">数量</span>
-                            <button class="quantity_btn" data-id="${item.id}" data-action="decrease">-</button>
-                            <input type="number" class="quantity-input" value="${item.quantity}" id="qty${item.id}" readonly>
-                            <button class="quantity_btn" data-id="${item.id}" data-action="increase">+</button>
-                        </div>
-                    </div>
-                    <button class="remove_btn" data-id="${item.id}">削除</button>
-                </div>
-            `;
-            container.innerHTML += cartItemHTML;
-        });
 
-        // イベントリスナーを追加
-        addEventListeners();
-        checkoutBtn.disabled = false;
-    }
-
-    function addEventListeners() {
-        // 数量変更ボタン
-        document.querySelectorAll('.quantity_btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const id = parseInt(this.getAttribute('data-id'));
-                const action = this.getAttribute('data-action');
-                if (action === 'increase') {
-                    increaseQuantity(id);
-                } else {
-                    decreaseQuantity(id);
-                }
-            });
-        });
-
-        // 削除ボタン
-        document.querySelectorAll('.remove_btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const id = parseInt(this.getAttribute('data-id'));
-                removeItem(id);
-            });
+            cartItemsEl.appendChild(itemEl);
         });
     }
 
-    function updateCartTitle() {
-        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-        cartTitle.textContent = `カートに入っている商品：${totalItems}点`;
-    }
+    bindEvents() {
+        // イベント委譲を使用
+        document.getElementById('cart-items').addEventListener('click', (e) => {
+            const cartId = e.target.dataset.cartId;
+            if (!cartId) return;
 
-    function updateTotal() {
-        const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        totalPrice.textContent = `¥${total.toLocaleString()}`;
-    }
-
-    async function increaseQuantity(itemId) {
-        const item = cartItems.find(item => item.id === itemId);
-        if (item) {
-            const newQuantity = item.quantity + 1;
-            if (await updateQuantityOnServer(itemId, newQuantity)) {
-                item.quantity = newQuantity;
-                document.getElementById('qty' + itemId).value = newQuantity;
-                updateCartTitle();
-                updateTotal();
+            if (e.target.classList.contains('delete-btn')) {
+                this.deleteItem(cartId);
+            } else if (e.target.classList.contains('increase')) {
+                this.updateQuantity(cartId, 'increase');
+            } else if (e.target.classList.contains('decrease')) {
+                this.updateQuantity(cartId, 'decrease');
             }
-        }
+        });
+
+        // チェックアウトボタン
+        document.getElementById('checkout-btn').addEventListener('click', () => {
+            this.checkout();
+        });
     }
 
-    async function decreaseQuantity(itemId) {
-        const item = cartItems.find(item => item.id === itemId);
-        if (item && item.quantity > 1) {
-            const newQuantity = item.quantity - 1;
-            if (await updateQuantityOnServer(itemId, newQuantity)) {
-                item.quantity = newQuantity;
-                document.getElementById('qty' + itemId).value = newQuantity;
-                updateCartTitle();
-                updateTotal();
-            }
-        }
-    }
-
-    async function removeItem(itemId) {
-        if (confirm('この商品をカートから削除しますか？')) {
-            try {
-                const response = await fetch('./api/remove_cart_item.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ item_id: itemId })
-                });
-
-                if (response.ok) {
-                    cartItems = cartItems.filter(item => item.id !== itemId);
-                    renderCartItems();
-                    updateCartTitle();
-                    updateTotal();
-                } else {
-                    alert('削除に失敗しました。');
-                }
-            } catch (error) {
-                console.error('Error removing item:', error);
-                alert('削除に失敗しました。');
-            }
-        }
-    }
-
-    async function updateQuantityOnServer(itemId, quantity) {
+    async updateQuantity(cartId, action) {
         try {
-            const response = await fetch('./api/update_cart_quantity.php', {
+            const response = await fetch('cart_update_api.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ 
-                    item_id: itemId, 
-                    quantity: quantity 
+                body: JSON.stringify({
+                    action: action,
+                    cart_id: cartId
                 })
             });
 
-            return response.ok;
+            const data = await response.json();
+            
+            if (data.success) {
+                // ローカルデータを更新
+                const item = this.cartItems.find(item => item.id == cartId);
+                if (item) {
+                    item.quantity = data.new_quantity;
+                    item.subtotal = item.price * item.quantity;
+                }
+                
+                // 表示を更新
+                this.updateItemDisplay(cartId, data.new_quantity);
+                this.updateTotal();
+                this.updateCartTitle();
+            } else {
+                this.showError('数量の更新に失敗しました');
+            }
         } catch (error) {
             console.error('Error updating quantity:', error);
-            return false;
+            this.showError('数量の更新中にエラーが発生しました');
         }
     }
 
-    async function handleCheckout() {
-        if (cartItems.length === 0) {
-            alert('カートに商品がありません。');
+    async deleteItem(cartId) {
+        if (!confirm('この商品をカートから削除しますか？')) {
             return;
         }
 
-        checkoutBtn.disabled = true;
-        checkoutBtn.textContent = '処理中...';
-
         try {
-            // Stripe Checkoutセッションを作成
-            const response = await fetch('./api/create_checkout_session.php', {
+            const response = await fetch('cart_update_api.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ cart_items: cartItems })
+                body: JSON.stringify({
+                    action: 'delete',
+                    cart_id: cartId
+                })
             });
 
-            const session = await response.json();
-
-            if (session.error) {
-                throw new Error(session.error);
+            const data = await response.json();
+            
+            if (data.success) {
+                // ローカルデータから削除
+                this.cartItems = this.cartItems.filter(item => item.id != cartId);
+                
+                // 表示を再描画
+                this.renderCart();
+            } else {
+                this.showError('商品の削除に失敗しました');
             }
-
-            // Stripe Checkoutにリダイレクト
-            window.location.href = session.checkout_url;
-
         } catch (error) {
-            console.error('Checkout error:', error);
-            alert('決済の準備中にエラーが発生しました。もう一度お試しください。');
-            checkoutBtn.disabled = false;
-            checkoutBtn.textContent = 'レジに進む';
+            console.error('Error deleting item:', error);
+            this.showError('商品の削除中にエラーが発生しました');
         }
     }
+
+    updateItemDisplay(cartId, newQuantity) {
+        const itemEl = document.querySelector(`[data-cart-id="${cartId}"]`);
+        if (itemEl) {
+            const quantityDisplay = itemEl.querySelector('.quantity-display');
+            quantityDisplay.textContent = newQuantity;
+        }
+    }
+
+    updateTotal() {
+        const total = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        document.getElementById('total-amount').textContent = `¥${this.formatPrice(total)}`;
+    }
+
+    updateCartTitle() {
+        const totalItems = this.cartItems.reduce((sum, item) => sum + parseInt(item.quantity), 0);
+        document.getElementById('cart-title').textContent = `カートに入っている商品：${totalItems}点`;
+    }
+
+    checkout() {
+        if (this.cartItems.length === 0) {
+            alert('カートに商品がありません');
+            return;
+        }
+        
+        // チェックアウトページに移動
+        window.location.href = 'checkout.php';
+    }
+
+    formatPrice(price) {
+        return parseInt(price).toLocaleString();
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    showError(message) {
+        alert(message);
+    }
+}
+
+// ページ読み込み時に初期化
+document.addEventListener('DOMContentLoaded', () => {
+    new CartManager();
 });
