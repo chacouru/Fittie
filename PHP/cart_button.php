@@ -21,15 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     header('Content-Type: application/json');
 
     // ログインチェック
-    if (!isset($_SESSION['user_id'])) {
-        echo '<button class="cart-btn login-required" onclick="requireLogin()">カートに追加</button>';
-        return;
-    }
-    
-    // 在庫チェック
-    if ($stock <= 0) {
-        echo '<button class="cart-btn out-of-stock" disabled>在庫切れ</button>';
-        return;
+    if (!isLoggedIn()) {
+        echo json_encode(['success' => false, 'message' => 'ログインが必要です']);
+        exit;
     }
 
     $user_id = $_SESSION['user_id'];
