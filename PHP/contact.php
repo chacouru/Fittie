@@ -23,8 +23,8 @@ if (isset($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fitty. | お問い合わせ</title>
-      <link rel="stylesheet" href="../CSS/common.css">
-  <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="../CSS/common.css">
   <link rel="stylesheet" href="../CSS/contact.css">
 </head>
 <body>

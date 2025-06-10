@@ -108,7 +108,9 @@ body {
     border-radius: 50px / 75px;
   }
 }
-
+footer{
+  margin-top: 80px;
+}
 @media screen and (max-width: 480px) {
   #overview-main #title {
     font-size: 1.5rem;

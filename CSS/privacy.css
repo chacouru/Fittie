@@ -28,7 +28,7 @@ main {
   letter-spacing: 0.1em;
 }
 
-h2 {
+.subtitle {
   font-size: 1.3rem;
   font-weight: bold;
   margin-top: 36px;

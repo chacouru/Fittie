@@ -51,7 +51,7 @@ input[type="tel"] {
 #submit {
     width: 100%;
     padding: 12px;
-    background-color: #ff6f00;
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
     color: white;
     border: none;
     border-radius: 4px;
@@ -61,7 +61,7 @@ input[type="tel"] {
 }
 
 #submit :hover {
-    background-color: #e65c00;
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
 }
 
 /* ログインページへのリンク */
