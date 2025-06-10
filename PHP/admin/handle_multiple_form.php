@@ -1,8 +1,9 @@
 <?php
+require_once 'DbManager.php'; // DbManager.php を読み込み
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['products'])) {
     $products = $_POST['products'];
-    $pdo = new PDO('mysql:host=localhost;dbname=fitty;charset=utf8mb4', 'root', '');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = getDb(); // getDb() 関数でDB接続
     $count = 0;
 
     foreach ($products as $product) {
@@ -30,4 +31,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['products'])) {
 } else {
     echo "無効なデータです。";
 }
-?>
