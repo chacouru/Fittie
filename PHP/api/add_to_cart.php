@@ -1,61 +1,40 @@
 <?php
 session_start();
-require_once '../DbManager.php';
 header('Content-Type: application/json');
 
-// ログインチェック
+// 必要なチェック
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'ログインが必要です']);
+    echo json_encode(['status' => 'error', 'message' => 'ログインしてください']);
+    exit;
+}
+
+// DB接続
+$pdo = new PDO('mysql:host=localhost;dbname=fitty;charset=utf8mb4', 'ユーザー名', 'パスワード', [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+]);
+
+$data = json_decode(file_get_contents("php://input"), true);
+if (!isset($data['product_id'])) {
+    echo json_encode(['status' => 'error', 'message' => 'product_id がありません']);
     exit;
 }
 
 $user_id = $_SESSION['user_id'];
-$product_id = isset($_POST['id']) ? intval($_POST['id']) : 0;
-$quantity = 1; // 必要ならJSから受け取ってもOK
+$product_id = (int)$data['product_id'];
 
-if ($product_id <= 0) {
-    echo json_encode(['success' => false, 'message' => '商品IDが不正です']);
-    exit;
-}
+// すでに同じ商品があるかチェック
+$stmt = $pdo->prepare("SELECT quantity FROM cart_items WHERE user_id = ? AND product_id = ?");
+$stmt->execute([$user_id, $product_id]);
+$existing = $stmt->fetch(PDO::FETCH_ASSOC);
 
-try {
-    $pdo = getDb();
-
-    // 商品の存在＆在庫確認（在庫が必要ならここでチェック）
-    $stmt = $pdo->prepare("SELECT stock FROM products WHERE id = ? AND is_active = 1");
-    $stmt->execute([$product_id]);
-    $product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$product) {
-        echo json_encode(['success' => false, 'message' => '商品が存在しません']);
-        exit;
-    }
-
-    if ($product['stock'] < $quantity) {
-        echo json_encode(['success' => false, 'message' => '在庫が足りません']);
-        exit;
-    }
-
-    // すでに同じ商品がカートにあるか？
-    $stmt = $pdo->prepare("SELECT id, quantity FROM cart_items WHERE user_id = ? AND product_id = ?");
+if ($existing) {
+    // 数量を1つ増やす
+    $stmt = $pdo->prepare("UPDATE cart_items SET quantity = quantity + 1 WHERE user_id = ? AND product_id = ?");
     $stmt->execute([$user_id, $product_id]);
-    $existing = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($existing) {
-        // 数量を加算して更新
-        $new_quantity = $existing['quantity'] + $quantity;
-        $stmt = $pdo->prepare("UPDATE cart_items SET quantity = ? WHERE id = ?");
-        $stmt->execute([$new_quantity, $existing['id']]);
-    } else {
-        // 新規追加
-        $stmt = $pdo->prepare("INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, ?)");
-        $stmt->execute([$user_id, $product_id, $quantity]);
-    }
-
-    echo json_encode(['success' => true]);
-
-} catch (PDOException $e) {
-    file_put_contents('cart_error_log.txt', $e->getMessage(), FILE_APPEND); // ログ出力
-    echo json_encode(['success' => false, 'message' => 'DBエラー']);
+} else {
+    // 新規追加
+    $stmt = $pdo->prepare("INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, 1)");
+    $stmt->execute([$user_id, $product_id]);
 }
 
+echo json_encode(['status' => 'success']);
