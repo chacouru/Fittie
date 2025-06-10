@@ -1,7 +1,6 @@
 @charset 'UTF-8';
 
 body {
-  font-family: 'Times New Roman', serif;
   background-color: #f5f5f5;
   color: #222;
   margin: 0;
@@ -9,6 +8,7 @@ body {
 }
 
 main {
+  font-family: 'Times New Roman', serif;
   max-width: 720px;
   margin: 0 auto;
   background: #fff;
@@ -52,15 +52,14 @@ ul {
 #end {
   text-align: right;
 }
-
+footer{
+  margin-top: 80px;
+}
 /* ===== レスポンシブ対応 ===== */
 @media screen and (max-width: 768px) {
-  body {
-    padding: 20px;
-  }
-
   main {
     padding: 30px 25px;
+    width: 80%;
   }
 
   #title {

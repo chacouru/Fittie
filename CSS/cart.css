@@ -1,8 +1,14 @@
 /* カートページスタイル */
+body{
+    background-color: #ececec;
+}
 .container {
     max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .cart_title {
@@ -220,6 +226,9 @@
 
 .alert-success {
     background: #28a745;
+}
+footer{
+    margin-top: 80px;
 }
 
 @keyframes slideInRight {

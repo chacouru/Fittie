@@ -184,7 +184,7 @@ input, textarea {
 }
 
 textarea {
-  resize: vertical;
+  resize: none;
   min-height: 120px;
 }
 
@@ -221,51 +221,7 @@ footer{
 }
 /* ===== レスポンシブ対応 ===== */
 @media screen and (max-width: 768px) {
-  .header {
-    height: 60px;
-    padding: 0 10px;
-  }
-
-  .header_logo h1 {
-    font-size: 1.4rem;
-  }
-
-  .menu_button {
-    width: 32px;
-    height: 26px;
-  }
-
-  .menu_button .bar {
-    height: 3px;
-  }
-
-  .header_nav {
-    display: none;
-  }
-
-  .menu_overlay {
-    width: 220px;
-    height: 220px;
-    border-radius: 0 0 80% 0;
-  }
-
-  .brand1 { top: 60px; left: 120px; }
-  .brand2 { top: 110px; left: 90px; }
-  .brand3 { top: 150px; left: 50px; }
-  .brand4 { top: 190px; left: 0; }
-
-  .footer_logo h2 {
-    font-size: 20px;
-  }
-
-  .footer_links,
-  .footer_sns {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .footer_copy {
-    font-size: 12px;
-  }
+main{
+  width: 80%;
+}
 }
