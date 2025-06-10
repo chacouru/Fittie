@@ -5,38 +5,17 @@ document.addEventListener('DOMContentLoaded', function() {
 // カート商品を読み込み
 async function loadCartItems() {
     try {
-        console.log('Loading cart items...');
         const response = await fetch('cart_api.php?action=get_cart');
-        console.log('Response status:', response.status);
-        
-        const responseText = await response.text();
-        console.log('Response text:', responseText);
-        
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (parseError) {
-            console.error('JSON parse error:', parseError);
-            console.log('Raw response:', responseText);
-            showError('サーバーからの応答が不正です');
-            return;
-        }
-        
-        console.log('Parsed data:', data);
+        const data = await response.json();
         
         if (data.success) {
             displayCartItems(data.items, data.total, data.count);
-            if (data.debug_user_id) {
-                console.log('Debug - User ID:', data.debug_user_id);
-                console.log('Debug - Raw cart items:', data.debug_raw_items);
-            }
         } else {
-            console.error('API Error:', data.error || data.debug_message);
-            showError(data.error || 'カート情報の読み込みに失敗しました');
+            showError('カート情報の読み込みに失敗しました');
         }
     } catch (error) {
-        console.error('Fetch Error:', error);
-        showError('通信エラーが発生しました: ' + error.message);
+        console.error('Error:', error);
+        showError('通信エラーが発生しました');
     }
 }
 
@@ -67,7 +46,7 @@ function displayCartItems(items, total, count) {
     container.innerHTML = items.map(item => `
         <div class="cart_item" data-cart-id="${item.id}">
             <div class="item_image">
-                <img src="../images/${item.image}" alt="${item.name}" onerror="this.src='../images/no-image.jpg'">
+                <img src="${item.image}" alt="${item.name}" onerror="this.src='img/products/no-image.png'">
             </div>
             <div class="item_details">
                 <div class="item_brand">${item.brand_name}</div>

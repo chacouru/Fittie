@@ -1,0 +1,248 @@
+/* 全体レイアウト */
+body {
+  font-family: 'Yu Gothic', sans-serif;
+  background-color: #ffffff;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* 進行状況バー */
+.progress_bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.step {
+  text-align: center;
+  flex: 1;
+  position: relative;
+}
+
+.step::after {
+  content: '';
+  position: absolute;
+  top: 18px;
+  right: -50%;
+  width: 100%;
+  height: 2px;
+  background-color: #ccc;
+  z-index: -1;
+}
+
+.step:last-child::after {
+  display: none;
+}
+
+.step.completed .step_number {
+  background-color: #ff6666;
+  color: #fff;
+}
+
+.step.current .step_number {
+  border: 2px solid #ff6666;
+  color: #ff6666;
+}
+
+.step_number {
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  border-radius: 50%;
+  background-color: #eee;
+  margin: 0 auto 8px;
+}
+
+.step_label {
+  font-size: 14px;
+}
+
+/* 完了メッセージ */
+.completion_message {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.success_icon {
+  font-size: 48px;
+  color: #4caf50;
+  margin-bottom: 10px;
+}
+
+.completion_title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.completion_text {
+  font-size: 16px;
+  color: #666;
+}
+
+/* 注文情報セクション */
+.order_info {
+  margin-bottom: 40px;
+}
+
+.section_title {
+  font-size: 20px;
+  border-left: 4px solid #ff6666;
+  padding-left: 10px;
+  margin-bottom: 16px;
+}
+
+.info_box {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fafafa;
+}
+
+.info_row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px dashed #ddd;
+}
+
+.info_row:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.value {
+  text-align: right;
+}
+
+.order_number {
+  font-family: monospace;
+  color: #444;
+}
+
+.total_amount {
+  font-weight: bold;
+  color: #ff6666;
+}
+
+/* 今後の流れ */
+.steps_list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.step_item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.step_icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  color: #ff6666;
+}
+
+.step_content h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.step_content p {
+  margin: 4px 0 0;
+  color: #666;
+}
+
+/* 支払い案内 */
+.payment_notice {
+  margin-top: 32px;
+}
+
+.notice_box {
+  border: 1px solid #ff6666;
+  background-color: #fff5f5;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.bank_info {
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+.important {
+  color: #d32f2f;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+/* アクションボタン */
+.action_buttons {
+  margin-top: 40px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.action_buttons a {
+  text-decoration: none;
+  background-color: #ff6666;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+}
+
+.action_buttons a:hover {
+  background-color: #e65555;
+}
+
+/* お問い合わせ */
+.contact_section {
+  margin-top: 60px;
+  text-align: center;
+}
+
+.contact_info {
+  margin-top: 10px;
+  line-height: 1.8;
+}
+
+.contact_info a {
+  color: #ff6666;
+  text-decoration: underline;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 600px) {
+  .info_row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .step_item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .progress_bar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step::after {
+    display: none;
+  }
+}

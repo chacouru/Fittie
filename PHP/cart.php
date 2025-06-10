@@ -1,4 +1,3 @@
-
 <?php
 require_once __DIR__ . '/login_function/functions.php';
 $user_id = check_login(); // 未ログインの場合は login.php にリダイレクト
@@ -45,18 +44,21 @@ $user_id = check_login(); // 未ログインの場合は login.php にリダイ�
 
   <main>
     <div class="container">
-      <h1 class="cart_title" id="cart_title">カートに入っている商品：0点</h1>
+      <h1 class="cart_title" id="cart_title">カートに入っている商品：読み込み中...</h1>
 
       <div id="cart_items_container">
         <!-- 商品アイテムがここに動的に表示されます -->
+        <div style="text-align: center; padding: 40px;">
+          <p>カート情報を読み込み中...</p>
+        </div>
       </div>
 
       <div class="total_section">
         <div class="total_label">合計（税込）</div>
-        <div class="total_price"></div>
+        <div class="total_price">¥0</div>
       </div>
 
-      <button class="checkout_btn">レジへ進む</button>
+      <button class="checkout_btn" onclick="proceedToCheckout()">レジへ進む</button>
     </div>
   </main>
 
@@ -85,5 +87,24 @@ $user_id = check_login(); // 未ログインの場合は login.php にリダイ�
 
 <script src="../JavaScript/hamburger.js"></script>
 <script src="../JavaScript/cart.js"></script>
+<script>
+// レジへ進む機能
+function proceedToCheckout() {
+    // カート内の商品数を確認
+    const cartTitle = document.getElementById('cart_title').textContent;
+    const itemCount = parseInt(cartTitle.match(/\d+/)[0]);
+    
+    if (itemCount === 0) {
+        alert('カートに商品が入っていません');
+        return;
+    }
+    
+    // チェックアウトページへ遷移
+    if (confirm('注文手続きに進みますか？')) {
+        window.location.href = 'checkout.php';  // ← 実際に遷移するように修正！
+    }
+}
+</script>
+
 </body>
 </html>
