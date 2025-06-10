@@ -440,6 +440,7 @@ if (isset($_SESSION['user_id']) && !empty($recent_products)): ?>
     <script src="../JavaScript/hamburger.js"></script>
     <script src="../JavaScript/slideshow.js"></script>
     <script src="../JavaScript/carousel.js"></script>
+    <script src="../JavaScript/cart_button.js"></script>
 
 </body>
 </html>
