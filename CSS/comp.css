@@ -4,11 +4,12 @@ body{
 }
 main {
   max-width: 800px;
-  margin: 200px auto 80px auto;
-  padding:20px;
+  margin: 100px auto 80px auto;
+  padding:80px;
   text-align: center;
-  padding-bottom: 80px;
   background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 
