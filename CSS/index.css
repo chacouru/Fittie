@@ -1,4 +1,7 @@
 /* メインコンテンツ */
+body{
+    background-color: #ececec;
+}
 main {
     min-height: calc(100vh - 60px);
     padding-top: 20px;
@@ -181,6 +184,7 @@ main {
 /* ===== カルーセル機能 ===== */
 .product-section {
     margin-bottom: 60px;
+    background-color: #ececec;
 }
 
 .carousel-container {
@@ -195,7 +199,7 @@ main {
     overflow: hidden;
     border-radius: 12px;
     background: #f8f9fa;
-    padding: 10px 0;
+    padding: 15px;
 }
 
 /* スクロールバー付きカルーセルトラック */

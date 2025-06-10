@@ -268,7 +268,6 @@ function displayProductCarousel($products, $section_id, $section_title) {
             <?php endforeach; ?>
         </nav>
     </div>
-    <div class="header_space"></div>
     <!-- headerここまで -->
 
     <main>
@@ -413,11 +412,8 @@ if (isset($_SESSION['user_id']) && !empty($recent_products)): ?>
         </div>
     </div>
 <?php endif; ?>
-
-
         </div>
     </main>
-
     <footer class="footer">
         <div class="footer_container">
             <a href="index.php">
