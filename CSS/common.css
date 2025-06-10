@@ -294,8 +294,8 @@
 
   /* footerここから */
   .footer {
-    background-color: #f8f8f8;
-    color: #333;
+    background-color: #373737;
+    color: #fff;
     padding: 30px 20px;
     border-top: 1px solid #ddd;
     font-size: 14px;
@@ -334,7 +334,7 @@
 
   .footer_links a {
     margin: 0 10px;
-    color: #555;
+    color: #fff;
     text-decoration: none;
   }
 
@@ -364,7 +364,7 @@
 
   .footer_copy {
     margin-top: 10px;
-    color: #999;
+    color: #fff;
   }
 
   /* footerここまで */
