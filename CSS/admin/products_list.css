@@ -1,0 +1,105 @@
+/* product_list.css */
+
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.products-table {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background: #f1f2f6;
+    color: #2d3436;
+    font-weight: bold;
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.status-active {
+    color: #00b894;
+    font-weight: bold;
+}
+
+.status-inactive {
+    color: #d63031;
+    font-weight: bold;
+}
+
+.actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.btn-edit {
+    background-color: #0984e3;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #d63031;
+    color: white;
+}
+
+.btn-toggle {
+    background-color: #fdcb6e;
+    color: #2d3436;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #636e72;
+    background-color: #fff;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.price {
+    font-weight: 600;
+    color: #2d3436;
+}
+
+.stock-low {
+    color: #d63031;
+    font-weight: bold;
+}

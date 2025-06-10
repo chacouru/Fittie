@@ -1,5 +1,5 @@
 <?php
-require_once 'DbManager.php'; // DbManager.php を読み込む
+require_once '../db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
     $file = $_FILES['csv_file']['tmp_name'];

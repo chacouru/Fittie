@@ -1,15 +1,13 @@
 <?php
 require_once __DIR__ . '/login_function/functions.php';
+require_once __DIR__ . '/db_connect.php'; // ← 追加
+
 $user_id = check_login(); // 未ログインの場合は login.php にリダイレクト
 
-// 注文処理（実際の処理は後で実装）
+// 注文処理
 try {
-    $pdo = new PDO('mysql:host=localhost;dbname=fitty;charset=utf8', 'root', '');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    // トランザクション開始
-    $pdo->beginTransaction();
-    
+    $pdo->beginTransaction(); // ← db_connect.phpの$pdoを使う
+
     // カート内容を取得
     $stmt = $pdo->prepare("
         SELECT 
@@ -24,21 +22,18 @@ try {
     ");
     $stmt->execute([$user_id]);
     $cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
     if (!empty($cart_items)) {
-        // 合計金額計算
         $total = 0;
         foreach ($cart_items as $item) {
             $price = $item['is_on_sale'] ? $item['sale_price'] : $item['price'];
             $total += $price * $item['quantity'];
         }
-        
-        // 注文をordersテーブルに挿入
+
         $stmt = $pdo->prepare("INSERT INTO orders (user_id, total_price) VALUES (?, ?)");
         $stmt->execute([$user_id, $total]);
         $order_id = $pdo->lastInsertId();
-        
-        // 注文アイテムをorder_itemsテーブルに挿入
+
         foreach ($cart_items as $item) {
             $price = $item['is_on_sale'] ? $item['sale_price'] : $item['price'];
             $stmt = $pdo->prepare("
@@ -47,25 +42,23 @@ try {
             ");
             $stmt->execute([$order_id, $item['product_id'], $item['quantity'], $price]);
         }
-        
-        // カートをクリア
+
         $stmt = $pdo->prepare("DELETE FROM cart_items WHERE user_id = ?");
         $stmt->execute([$user_id]);
-        
-        // トランザクションコミット
+
         $pdo->commit();
-        
         $order_success = true;
         $order_number = str_pad($order_id, 8, '0', STR_PAD_LEFT);
     } else {
         $order_success = false;
     }
-    
+
 } catch (PDOException $e) {
     $pdo->rollBack();
     $order_success = false;
     error_log('Order processing error: ' . $e->getMessage());
 }
+
 
 // 注文が失敗した場合はカートページにリダイレクト
 if (!$order_success) {

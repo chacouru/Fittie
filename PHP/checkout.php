@@ -1,11 +1,10 @@
 <?php
 require_once __DIR__ . '/login_function/functions.php';
+require_once 'db_connect.php';
 $user_id = check_login(); // 未ログインの場合は login.php にリダイレクト
 
 // ユーザー情報とカート情報を取得
 try {
-  $pdo = new PDO('mysql:host=localhost;dbname=fitty;charset=utf8', 'root', '');
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   // ユーザー情報取得
   $stmt = $pdo->prepare("SELECT name, email, address, phone FROM users WHERE id = ?");

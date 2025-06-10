@@ -1,8 +1,7 @@
 <?php
-require_once '../DbManager.php'; // パスはプロジェクト構成に合わせて変更してな
+require_once '../db_connect.php';
 
-$db = getDb(); // DbManager を呼び出す
-$stmt = $db->query("SELECT id, name FROM brands ORDER BY name ASC");
+$stmt = $pdo->query("SELECT id, name FROM brands ORDER BY name ASC");
 $brands = $stmt->fetchAll();
 ?>
 
@@ -13,20 +12,22 @@ $brands = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <title>商品一括登録</title>
-    <link rel="stylesheet" href="../../CSS/reset.css">
-    <link rel="stylesheet" href="../../CSS/add_product.css">
+          <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="../../CSS/admin/admin_header.css">    
+    <link rel="stylesheet" href="../../CSS/admin/add_product.css">
 </head>
 
 <body>
     <div class="container">
         <div class="header">
-            <h1>ブランド管理</h1>
-            <p>商品ブランドの追加・管理が行えます。</p>
+            <h1>商品追加</h1>
+            <p>登録されている商品の一覧・編集・削除が行えます。</p>
             <div class="nav-menu">
-                <a href="./products_list.php">商品管理</a>
                 <a href="./add_product.php">商品追加</a>
+                <a href="./products_list.php">商品管理</a>
                 <a href="./users_list.php">ユーザー管理</a>
-                <a href="../cart_preview.php">サイトに戻る</a>
+                <a href="./brands_list.php">ブランド管理</a>
+                <a href="../index.php">サイトに戻る</a>
             </div>
         </div>
 
