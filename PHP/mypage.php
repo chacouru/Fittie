@@ -73,7 +73,6 @@ function isActive($currentTab, $tabName) {
     <div class="header_logo">
         <h1><a href="./index.php">fitty.</a></h1>
     </div>
-    <nav class="header_nav"> 
             <nav class="header_nav"> <?php
     if (isset($_SESSION['user_id'])) {
         echo '<div class="login_logout_img">

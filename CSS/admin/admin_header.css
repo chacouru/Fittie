@@ -1,0 +1,53 @@
+/* admin_header.css */
+
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #f4f6f8;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.header {
+    background-color: #2d3436;
+    color: #fff;
+    padding: 20px 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.header p {
+    margin: 5px 0 15px;
+    font-size: 14px;
+    color: #b2bec3;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.nav-menu a {
+    color: #dfe6e9;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.nav-menu a:hover {
+    background-color: #636e72;
+    color: #fff;
+}
+
+.nav-menu a.active {
+    background-color: #00cec9;
+    color: #fff;
+    font-weight: bold;
+}

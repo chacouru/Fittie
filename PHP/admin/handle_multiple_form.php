@@ -1,5 +1,5 @@
 <?php
-require_once 'DbManager.php'; // DbManager.php を読み込み
+require_once '../db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['products'])) {
     $products = $_POST['products'];

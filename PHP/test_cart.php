@@ -1,6 +1,7 @@
 <?php
 // このファイルは一時的なデバッグ用です
 require_once __DIR__ . '/login_function/functions.php';
+require_once 'db_connect.php';
 
 echo "<h2>カートデバッグ情報</h2>";
 
@@ -14,14 +15,7 @@ try {
 }
 
 // 2. データベース接続確認
-try {
-    $pdo = new PDO('mysql:host=localhost;dbname=fitty;charset=utf8', 'root', '');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "<p>✓ データベース接続成功</p>";
-} catch (PDOException $e) {
-    echo "<p>✗ データベース接続エラー: " . $e->getMessage() . "</p>";
-    exit;
-}
+
 
 // 3. cart_itemsテーブル確認
 try {
