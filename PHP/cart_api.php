@@ -1,26 +1,11 @@
 <?php
 require_once __DIR__ . '/login_function/functions.php';
+require_once __DIR__ . '/db_connect.php'; 
 
 // ログイン確認
 $user_id = check_login();
 
-// デバッグ: ログイン確認結果
-error_log("Debug: Login check result - User ID: " . ($user_id ? $user_id : 'NULL'));
 
-// データベース接続
-try {
-    $pdo = new PDO('mysql:host=localhost;dbname=fitty;charset=utf8', 'root', '');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    error_log("Debug: Database connection successful");
-} catch (PDOException $e) {
-    error_log("Database connection error: " . $e->getMessage());
-    http_response_code(500);
-    echo json_encode([
-        'error' => 'データベース接続エラー',
-        'debug_message' => $e->getMessage()
-    ]);
-    exit;
-}
 
 header('Content-Type: application/json');
 
@@ -52,15 +37,6 @@ switch ($method) {
 
 function getCartItems($pdo, $user_id) {
     try {
-        // デバッグ: ユーザーIDを確認
-        error_log("Debug: User ID = " . $user_id);
-        
-        // まず、cart_itemsテーブルにデータがあるかを確認
-        $debug_stmt = $pdo->prepare("SELECT * FROM cart_items WHERE user_id = ?");
-        $debug_stmt->execute([$user_id]);
-        $debug_cart = $debug_stmt->fetchAll(PDO::FETCH_ASSOC);
-        error_log("Debug: Cart items found: " . print_r($debug_cart, true));
-        
         $stmt = $pdo->prepare("
             SELECT 
                 ci.id,
@@ -82,9 +58,6 @@ function getCartItems($pdo, $user_id) {
         $stmt->execute([$user_id]);
         $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        // デバッグ: 取得した商品情報を確認
-        error_log("Debug: Items with product info: " . print_r($items, true));
-        
         $total = 0;
         $formatted_items = [];
         
@@ -92,6 +65,20 @@ function getCartItems($pdo, $user_id) {
             $price = $item['is_on_sale'] ? $item['sale_price'] : $item['price'];
             $subtotal = $price * $item['quantity'];
             $total += $subtotal;
+            
+            // 画像パスを適切に設定
+            $image_path = '';
+            if ($item['image']) {
+                $brand_name = $item['brand_name'] ?: 'default';
+                $image_path = "img/products/{$brand_name}/{$item['image']}";
+                
+                // ファイルが存在しない場合はno-imageを使用
+                if (!file_exists(__DIR__ . '/' . $image_path)) {
+                    $image_path = 'img/products/no-image.png';
+                }
+            } else {
+                $image_path = 'img/products/no-image.png';
+            }
             
             $formatted_items[] = [
                 'id' => $item['id'],
@@ -101,31 +88,21 @@ function getCartItems($pdo, $user_id) {
                 'price' => $price,
                 'quantity' => $item['quantity'],
                 'subtotal' => $subtotal,
-                'image' => $item['image'],
+                'image' => $image_path,
                 'is_on_sale' => $item['is_on_sale']
             ];
         }
         
-        // デバッグ: 最終的なレスポンスを確認
-        $response = [
+        echo json_encode([
             'success' => true,
             'items' => $formatted_items,
             'total' => $total,
-            'count' => count($items),
-            'debug_user_id' => $user_id,
-            'debug_raw_items' => $debug_cart
-        ];
-        error_log("Debug: Final response: " . print_r($response, true));
-        
-        echo json_encode($response);
+            'count' => count($items)
+        ]);
         
     } catch (PDOException $e) {
-        error_log("Database error: " . $e->getMessage());
         http_response_code(500);
-        echo json_encode([
-            'error' => 'カート情報の取得に失敗しました',
-            'debug_message' => $e->getMessage()
-        ]);
+        echo json_encode(['error' => 'カート情報の取得に失敗しました']);
     }
 }
 
