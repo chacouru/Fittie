@@ -58,12 +58,9 @@ footer{
 
 /* タブレットサイズ以下 */
 @media screen and (max-width: 768px) {
-  body {
-    padding: 30px 20px;
-  }
-
   main {
     padding: 30px 25px;
+    width: 80%;
   }
 
   #title {
