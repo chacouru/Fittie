@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['brand']) || isset($_GE
         <span class="bar"></span><span class="bar"></span><span class="bar"></span>
     </button>
     <div class="header_logo">
-        <h1 id="title"><a href="./index.php">fitty.</a></h1>
+        <h1><a href="./index.php">fitty.</a></h1>
     </div>
     <nav class="header_nav">
         <?php if (isset($_SESSION['user_id'])): ?>
@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['brand']) || isset($_GE
 <!-- 検索フォーム -->
 <main>
     <form action="" method="get" class="form_box">
-        <h1>探す</h1>
+        <h1  id="title">探す</h1>
         <div class="form_container">
             <div class="select_container">
                 <select name="brand" required>
