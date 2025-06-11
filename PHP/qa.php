@@ -81,8 +81,6 @@ if (isset($_SESSION['user_id'])) {
 </div>
 <?php endif; ?>
 
-<div class="header_space"></div>
-<!-- headerここまで -->
 <div class="backdrop" id="menuBackdrop"></div>
 
 <?php if (isset($_SESSION['user_id'])): ?>
@@ -103,12 +101,10 @@ if (isset($_SESSION['user_id'])) {
   </nav>
 </div>
 <?php endif; ?>
-
-<div class="header_space"></div>
   <!-- headerここまで -->
 <main>
 
-    <h1>Q&A</h1>
+    <h1 id="title">Q&A</h1>
 
     <p>Q1. サイズ選びに迷っています。どのように選べばよいですか？</p>
     <p>A1. 各商品ページにサイズガイドを掲載しております。また、商品によってはスタッフの着用コメントもございますので、そちらも参考にしてください。</p>
