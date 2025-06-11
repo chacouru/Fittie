@@ -342,25 +342,22 @@
     text-decoration: underline;
   }
 
-  .footer_sns {
-    margin: 15px 0;
-  }
-
-  .footer_sns a {
-    margin: 0 8px;
-    display: inline-block;
-  }
-
-  .footer_sns img {
-    width: 24px;
-    height: 24px;
-    filter: grayscale(100%);
-    transition: filter 0.3s;
-  }
-
-  .footer_sns img:hover {
-    filter: grayscale(0%);
-  }
+ /* SNSアイコンのスタイル */
+.footer_sns {
+  margin-bottom: 20px;
+}
+.footer_sns a {
+  margin: 0 10px;
+  display: inline-block;
+}
+.footer_sns img {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s;
+}
+.footer_sns img:hover {
+  transform: scale(1.1);
+}
 
   .footer_copy {
     margin-top: 10px;
