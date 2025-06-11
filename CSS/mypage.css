@@ -248,7 +248,9 @@
     transform: scale(1.1);
 }
 
-
+footer{
+    margin-top: 80px;
+}
     /* レスポンシブ対応 */
     @media (max-width: 768px) {
         .action-buttons {
