@@ -1,5 +1,5 @@
-<?php 
-require_once __DIR__ . '/../db_connect.php'; 
+<?php
+require_once __DIR__ . '/../db_connect.php';
 
 // ここで $pdo が使える状態
 
@@ -28,29 +28,33 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商品一覧 - 管理者ページ</title>
     <link rel="stylesheet" href="../CSS/reset.css">
-    <link rel="stylesheet" href="../../CSS/admin/admin_header.css">    
-    <link rel="stylesheet" href="../../CSS/admin/products_list.css">    
-    
+    <link rel="stylesheet" href="../../CSS/admin/admin_header.css">
+    <link rel="stylesheet" href="../../CSS/admin/products_list.css">
+
 </head>
+
 <body>
     <div class="container">
         <div class="header">
+            <?php
+            $current_page = basename($_SERVER['SCRIPT_NAME']);
+            ?>
             <h1>商品管理</h1>
             <p>登録されている商品の一覧・編集・削除が行えます。</p>
             <div class="nav-menu">
-                <a href="./add_product.php">商品追加</a>
-                <a href="./products_list.php">商品管理</a>
-                <a href="./users_list.php">ユーザー管理</a>
-                <a href="./brands_list.php">ブランド管理</a>
-                <a href="../index.php">サイトに戻る</a>
+                <a href="./add_product.php" class="<?= $current_page === 'add_product.php' ? 'active' : '' ?>">商品追加</a>
+                <a href="./products_list.php" class="<?= $current_page === 'products_list.php' ? 'active' : '' ?>">商品管理</a>
+                <a href="./users_list.php" class="<?= $current_page === 'users_list.php' ? 'active' : '' ?>">ユーザー管理</a>
+                <a href="./brands_list.php" class="<?= $current_page === 'brands_list.php' ? 'active' : '' ?>">ブランド管理</a>
+                <a href="../index.php" class="<?= $current_page === 'index.php' ? 'active' : '' ?>">サイトに戻る</a>
             </div>
         </div>
-        
         <div class="products-table">
             <?php if (empty($products)): ?>
                 <div class="empty-state">
@@ -79,10 +83,10 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td><?= htmlspecialchars($product['id']) ?></td>
                                 <td>
                                     <?php if ($product['image']): ?>
-                                        <img src="../img/products/<?= htmlspecialchars($product['brand_name']) ?>/<?= htmlspecialchars($product['image']) ?>" 
-                                             alt="<?= htmlspecialchars($product['name']) ?>" 
-                                             class="product-image"
-                                             onerror="this.style.display='none'">
+                                        <img src="../img/products/<?= htmlspecialchars($product['brand_name']) ?>/<?= htmlspecialchars($product['image']) ?>"
+                                            alt="<?= htmlspecialchars($product['name']) ?>"
+                                            class="product-image"
+                                            onerror="this.style.display='none'">
                                     <?php else: ?>
                                         <div style="width:60px;height:60px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;border-radius:4px;font-size:12px;color:#999;">画像なし</div>
                                     <?php endif; ?>
@@ -102,8 +106,8 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td>
                                     <div class="actions">
                                         <a href="edit_product.php?id=<?= $product['id'] ?>" class="btn btn-edit">編集</a>
-                                        <button onclick="toggleStatus(<?= $product['id'] ?>, <?= $product['is_active'] ? 0 : 1 ?>)" 
-                                                class="btn btn-toggle">
+                                        <button onclick="toggleStatus(<?= $product['id'] ?>, <?= $product['is_active'] ? 0 : 1 ?>)"
+                                            class="btn btn-toggle">
                                             <?= $product['is_active'] ? '非公開' : '公開' ?>
                                         </button>
                                         <button onclick="deleteProduct(<?= $product['id'] ?>)" class="btn btn-delete">削除</button>
@@ -121,42 +125,43 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         function toggleStatus(productId, newStatus) {
             if (confirm(newStatus ? '商品を公開しますか？' : '商品を非公開にしますか？')) {
                 fetch('toggle_product_status.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `product_id=${productId}&status=${newStatus}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert('エラーが発生しました');
-                    }
-                });
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `product_id=${productId}&status=${newStatus}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('エラーが発生しました');
+                        }
+                    });
             }
         }
 
         function deleteProduct(productId) {
             if (confirm('本当に削除しますか？この操作は取り消せません。')) {
                 fetch('delete_product.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `product_id=${productId}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert('削除に失敗しました');
-                    }
-                });
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `product_id=${productId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('削除に失敗しました');
+                        }
+                    });
             }
         }
     </script>
 </body>
+
 </html>
