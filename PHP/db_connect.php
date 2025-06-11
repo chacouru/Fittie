@@ -1,15 +1,16 @@
 <?php
 // db_connect.php
-$host = 'localhost'; // データベースのホスト名
-$dbname = 'fitty'; // データベース名
-$username = 'root'; // データベースのユーザー名
-$password = ''; // データベースのパスワード（必要に応じて設定）
+$host = 'localhost';
+$dbname = 'fitty';
+$username = 'root';
+$password = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    echo 'データベース接続エラー: ' . $e->getMessage();
-    exit;
+    // エラー表示を削除またはログファイルに記録
+    error_log('データベース接続エラー: ' . $e->getMessage());
+    // echo文は削除
 }
 ?>
