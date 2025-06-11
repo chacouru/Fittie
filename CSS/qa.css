@@ -4,24 +4,23 @@
 
 /* 全体設定 */
 body {
-  font-family: 'Noto Sans JP', sans-serif;
   background-color: #f9f9f9;
   color: #333;
   margin: 0;
-  padding: 0 20px;
   line-height: 1.8;
 }
 
 main {
+  font-family: 'Noto Sans JP', sans-serif;
   max-width: 800px;
-  margin: 40px auto;
+  margin: 30px auto;
   background: #fff;
   padding: 40px 50px;
   box-shadow: 0 0 12px rgba(0,0,0,0.05);
   border-radius: 8px;
 }
 
-h1 {
+#title {
   font-size: 2rem;
   text-align: center;
   margin-bottom: 40px;
@@ -68,6 +67,7 @@ p:nth-of-type(even) {
 
 @media screen and (max-width: 480px) {
   main {
+    width: 80%;
     padding: 20px 15px;
   }
 
