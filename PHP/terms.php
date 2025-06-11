@@ -142,29 +142,27 @@ if (isset($_SESSION['user_id'])) {
     <h2>第12条（準拠法および管轄裁判所）</h2>
     <p>本規約の解釈および適用は日本法に準拠し、本サイト利用に関する紛争は東京地方裁判所を専属的合意管轄裁判所とします。</p>
 </main>
-<footer class="footer">
+<!-- フッターここから -->
+ <footer class="footer">
     <div class="footer_container">
-      <a href="index.php">
-        <div class="footer_logo">
-          <h2>fitty.</h2>
+        <a href="index.php"><div class="footer_logo"><h2>fitty.</h2></div></a>
+        <div class="footer_links">
+            <a href="./overview.php">会社概要</a>
+            <a href="./terms.php">利用規約</a>
+            <a href="./privacy.php">プライバシーポリシー</a>
+            <a href="./qa.php">よくある質問</a>
         </div>
-      </a>
-      <div class="footer_links">
-        <a href="./overview.php">会社概要</a>
-        <a href="./terms.php">利用規約</a>
-        <a href="./privacy.php">プライバシーポリシー</a>
-      </div>
-      <div class="footer_sns">
-        <a href="#" aria-label="Twitter"><img src="icons/twitter.svg" alt="Twitter"></a>
-        <a href="#" aria-label="Instagram"><img src="icons/instagram.svg" alt="Instagram"></a>
-        <a href="#" aria-label="Facebook"><img src="icons/facebook.svg" alt="Facebook"></a>
-      </div>
-      <div class="footer_copy">
-        <small>&copy; 2025 Fitty All rights reserved.</small>
-      </div>
+        <div class="footer_sns">
+            <a href="#"><img src="img/sns_icon/twitter.png" alt="Twitter"><a>
+            <a href="#"><img src="img/sns_icon/instagram.png" alt="Instagram"><a>
+            <a href="#"><img src="img/sns_icon/youtube.png" alt="YouTube"><a>
+        </div>
+        <div class="footer_copy">
+            <small>&copy; 2025 Fitty All rights reserved.</small>
+        </div>
     </div>
-  </footer>
-  <!-- footer -->
+</footer>
+<!-- フッターここまで -->
    <script src="../JavaScript/hamburger.js"></script>
 </body>
 </html>
