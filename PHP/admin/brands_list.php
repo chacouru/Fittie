@@ -81,17 +81,19 @@ $brands = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <div class="container">
         <div class="header">
+            <?php
+            $current_page = basename($_SERVER['SCRIPT_NAME']);
+            ?>
             <h1>ブランド管理</h1>
             <p>登録されている商品の一覧・編集・削除が行えます。</p>
             <div class="nav-menu">
-                <a href="./add_product.php">商品追加</a>
-                <a href="./products_list.php">商品管理</a>
-                <a href="./users_list.php">ユーザー管理</a>
-                <a href="./brands_list.php">ブランド管理</a>
-                <a href="../index.php">サイトに戻る</a>
+                <a href="./add_product.php" class="<?= $current_page === 'add_product.php' ? 'active' : '' ?>">商品追加</a>
+                <a href="./products_list.php" class="<?= $current_page === 'products_list.php' ? 'active' : '' ?>">商品管理</a>
+                <a href="./users_list.php" class="<?= $current_page === 'users_list.php' ? 'active' : '' ?>">ユーザー管理</a>
+                <a href="./brands_list.php" class="<?= $current_page === 'brands_list.php' ? 'active' : '' ?>">ブランド管理</a>
+                <a href="../index.php" class="<?= $current_page === 'index.php' ? 'active' : '' ?>">サイトに戻る</a>
             </div>
         </div>
-
         <?php if (isset($success_message)): ?>
             <div class="alert alert-success"><?= $success_message ?></div>
         <?php endif; ?>

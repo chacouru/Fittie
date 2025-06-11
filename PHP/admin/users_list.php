@@ -26,36 +26,43 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ユーザー管理 - 管理者ページ</title>
-        <link rel="stylesheet" href="../CSS/reset.css">
-    <link rel="stylesheet" href="../../CSS/admin/admin_header.css">    
-    <link rel="stylesheet" href="../../CSS/admin/users_list.css">    
-  
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="../../CSS/admin/admin_header.css">
+    <link rel="stylesheet" href="../../CSS/admin/users_list.css">
+
 </head>
+
 <body>
     <div class="container">
         <div class="header">
+            <?php
+            $current_page = basename($_SERVER['SCRIPT_NAME']);
+            ?>
             <h1>ユーザー管理</h1>
             <p>登録されている商品の一覧・編集・削除が行えます。</p>
             <div class="nav-menu">
-                <a href="./add_product.php">商品追加</a>
-                <a href="./products_list.php">商品管理</a>
-                <a href="./users_list.php">ユーザー管理</a>
-                <a href="./brands_list.php">ブランド管理</a>
-                <a href="../index.php">サイトに戻る</a>
+                <a href="./add_product.php" class="<?= $current_page === 'add_product.php' ? 'active' : '' ?>">商品追加</a>
+                <a href="./products_list.php" class="<?= $current_page === 'products_list.php' ? 'active' : '' ?>">商品管理</a>
+                <a href="./users_list.php" class="<?= $current_page === 'users_list.php' ? 'active' : '' ?>">ユーザー管理</a>
+                <a href="./brands_list.php" class="<?= $current_page === 'brands_list.php' ? 'active' : '' ?>">ブランド管理</a>
+                <a href="../index.php" class="<?= $current_page === 'index.php' ? 'active' : '' ?>">サイトに戻る</a>
             </div>
         </div>
-        
+
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-number"><?= count($users) ?></div>
                 <div class="stat-label">総ユーザー数</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number"><?= count(array_filter($users, function($u) { return $u['order_count'] > 0; })) ?></div>
+                <div class="stat-number"><?= count(array_filter($users, function ($u) {
+                                                return $u['order_count'] > 0;
+                                            })) ?></div>
                 <div class="stat-label">購入経験ユーザー</div>
             </div>
             <div class="stat-card">
@@ -63,11 +70,11 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="stat-label">総売上</div>
             </div>
         </div>
-        
+
         <div class="search-box">
             <input type="text" class="search-input" placeholder="ユーザー名またはメールアドレスで検索..." onkeyup="filterUsers(this.value)">
         </div>
-        
+
         <div class="users-table">
             <?php if (empty($users)): ?>
                 <div class="empty-state">
@@ -119,11 +126,11 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         function filterUsers(searchTerm) {
             const rows = document.querySelectorAll('.user-row');
             const term = searchTerm.toLowerCase();
-            
+
             rows.forEach(row => {
                 const name = row.getAttribute('data-name');
                 const email = row.getAttribute('data-email');
-                
+
                 if (name.includes(term) || email.includes(term)) {
                     row.style.display = '';
                 } else {
@@ -145,22 +152,23 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         function deleteUser(userId) {
             if (confirm('本当にこのユーザーを削除しますか？関連する注文履歴も削除されます。')) {
                 fetch('delete_user.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `user_id=${userId}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert('削除に失敗しました: ' + data.message);
-                    }
-                });
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `user_id=${userId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('削除に失敗しました: ' + data.message);
+                        }
+                    });
             }
         }
     </script>
 </body>
+
 </html>

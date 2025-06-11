@@ -1,4 +1,7 @@
-  .add-brand-form {
+body{
+    padding: 40px 33px;
+}
+.add-brand-form {
             background: #fff;
             padding: 25px;
             border-radius: 8px;
