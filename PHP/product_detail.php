@@ -46,8 +46,7 @@ try {
     $brand_name = isset($product['brand_name']) ? trim($product['brand_name']) : 'no-brand';
     $safe_brand_folder = preg_replace('/[^\w\-]/u', '_', $brand_name);
     $image_file = $product['image'] ?? 'no-image.png';
-    $product_image_path = "../PHP/img/products/{$safe_brand_folder}/{$image_file}";
-
+$product_image_path = "img/products/{$safe_brand_folder}/{$image_file}";
     // セール情報処理
     $display_price = $product['price'];
     $sale_info = '';
@@ -147,12 +146,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     }
 }
 
-// 関連商品の画像パス生成関数
+// 関連商品用の関数も修正
 function getProductImagePath($product) {
     $brand_name = isset($product['brand_name']) ? trim($product['brand_name']) : 'no-brand';
     $safe_brand_folder = preg_replace('/[^\w\-]/u', '_', $brand_name);
     $image_file = $product['image'] ?? 'no-image.png';
-    return "../PHP/img/products/{$safe_brand_folder}/{$image_file}";
+    return "img/products/{$safe_brand_folder}/{$image_file}";
 }
 ?>
 
