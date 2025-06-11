@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/login_function/session.php';
-require_once 'cart_button.php'; // カートボタン用関数
+require_once 'cart_button.php';
 require_once 'db_connect.php';
 
 
