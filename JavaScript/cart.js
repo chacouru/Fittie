@@ -36,7 +36,7 @@ function displayCartItems(items, total, count) {
         container.innerHTML = `
             <div class="empty_cart">
                 <p>カートに商品が入っていません</p>
-                <a href="toppage.php" class="continue_shopping">ショッピングを続ける</a>
+                <a href="index.php" class="continue_shopping">ショッピングを続ける</a>
             </div>
         `;
         return;
