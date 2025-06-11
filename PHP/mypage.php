@@ -198,9 +198,9 @@ function isActive($currentTab, $tabName) {
             <a href="./privacy.php">プライバシーポリシー</a>
         </div>
         <div class="footer_sns">
-            <a href="#"><img src="icons/twitter.svg" alt="Twitter"></a>
-            <a href="#"><img src="icons/instagram.svg" alt="Instagram"></a>
-            <a href="#"><img src="icons/facebook.svg" alt="Facebook"></a>
+            <a href="#"><img src="/PHP/img/sns_icon/twitter.png" alt="Twitter"></a>
+            <a href="#"><img src="/PHP/img/sns_icon/instagram.png" alt="Instagram"></a>
+            <a href="#"><img src="/PHP/img/sns_icon/youtube.png" alt="YouTube"></a>
         </div>
         <div class="footer_copy">
             <small>&copy; 2025 Fitty All rights reserved.</small>

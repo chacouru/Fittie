@@ -6,18 +6,19 @@ $brands = [];
 
 // ログインしている場合、お気に入りブランドを取得
 if (isset($_SESSION['user_id'])) {
-    $user_id = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("
-        SELECT b.id, b.name 
-        FROM favorite_brands fb
-        JOIN brand b ON fb.brand_id = b.id
-        WHERE fb.user_id = ?
-    ");
-    $stmt->execute([$user_id]);
-    $brands = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $user_id = $_SESSION['user_id'];
+  $stmt = $pdo->prepare("
+  SELECT b.id, b.name 
+  FROM favorite_brands fb
+  JOIN brand b ON fb.brand_id = b.id
+  WHERE fb.user_id = ?
+  ");
+  $stmt->execute([$user_id]);
+  $brands = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>
-<link rel="stylesheet" href="../CSS/common.css">
+<!-- ヘッダーここから -->
+ <link rel="stylesheet" href="../CSS/common.css">
 <header class="header">
   <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
     <span class="bar"></span><span class="bar"></span><span class="bar"></span>
@@ -55,4 +56,28 @@ if (isset($_SESSION['user_id'])) {
 <?php endif; ?>
 
 <div class="header_space"></div>
+
 <script src="../JavaScript/hamburger.js"></script>
+<!-- ヘッダーここまで -->
+
+
+<!-- フッターここから -->
+ <footer class="footer">
+    <div class="footer_container">
+        <a href="index.php"><div class="footer_logo"><h2>fitty.</h2></div></a>
+        <div class="footer_links">
+            <a href="./overview.php">会社概要</a>
+            <a href="./terms.php">利用規約</a>
+            <a href="./privacy.php">プライバシーポリシー</a>
+        </div>
+        <div class="footer_sns">
+            <a href="#"><img src="/PHP/img/sns_icon/twitter.png" alt="Twitter"></a>
+            <a href="#"><img src="/PHP/img/sns_icon/instagram.png" alt="Instagram"></a>
+            <a href="#"><img src="/PHP/img/sns_icon/youtube.png" alt="YouTube"></a>
+        </div>
+        <div class="footer_copy">
+            <small>&copy; 2025 Fitty All rights reserved.</small>
+        </div>
+    </div>
+</footer>
+<!-- フッターここまで -->
