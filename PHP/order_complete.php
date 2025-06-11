@@ -4,6 +4,28 @@ require_once __DIR__ . '/db_connect.php'; // ← 追加
 
 $user_id = check_login(); // 未ログインの場合は login.php にリダイレクト
 
+// お気に入りブランド取得（ハンバーガーメニュー表示用）
+if ($user_id) {
+    $stmt = $pdo->prepare("
+        SELECT b.id, b.name 
+        FROM favorite_brands fb
+        JOIN brands b ON fb.brand_id = b.id
+        WHERE fb.user_id = ?
+    ");
+    $stmt->execute([$user_id]);
+    $brands = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// ユーザー情報取得
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id = :id");
+$stmt->execute([':id' => $user_id]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$user) {
+    echo 'ユーザー情報が見つかりません。';
+    exit;
+}
+
 // 注文処理
 try {
     $pdo->beginTransaction(); // ← db_connect.phpの$pdoを使う
@@ -86,32 +108,60 @@ $payment_names = [
 </head>
 
 <body>
-  <!-- headerここから -->
-  <header class="header">
+ <!-- headerここから -->
+<header class="header">
     <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
-      <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
     </button>
     <div class="header_logo">
-      <h1><a href="./toppage.php">fitty.</a></h1>
+        <h1><a href="./index.php">fitty.</a></h1>
     </div>
-    <nav class="header_nav">
-      <a href="./mypage.php" class="icon-user" title="マイページ">👤</a>
-      <a href="./cart.php" class="icon-cart" title="カート">🛒</a>
-      <a href="./search.php" class="icon-search" title="検索">🔍</a>
-      <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a>
+            <nav class="header_nav"> <?php
+    if (isset($_SESSION['user_id'])) {
+        echo '<div class="login_logout_img">
+  <a href="logout.php">
+    <img src="./img/logout.jpg" alt="ログアウト">
+  </a>
+</div>
+';
+    } else {
+        echo '<div class="login_logout_img">
+  <a href="logout.php">
+    <img src="./img/login.png" alt="ログイン">
+  </a>
+</div>
+';
+    }?>
+        <a href="./mypage.php" class="icon-user" title="マイページ">👤</a> 
+        <a href="./cart.php" class="icon-cart" title="カート">🛒</a> 
+        <a href="./search.php" class="icon-search" title="検索">🔍</a> 
+        <a href="./contact.php" class="icon-contact" title="お問い合わせ">✉️</a> 
     </nav>
-  </header>
-  <div class="backdrop" id="menuBackdrop"></div>
-  <div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
+</header>
+
+<div class="backdrop" id="menuBackdrop"></div>
+
+<?php if ($user_id): ?>
+<div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
     <nav>
-      <a href="#" role="menuitem" class="bland brand1">ブランドA</a>
-      <a href="#" role="menuitem" class="bland brand2">ブランドB</a>
-      <a href="#" role="menuitem" class="bland brand3">ブランドC</a>
-      <a href="#" role="menuitem" class="bland brand4">ブランドD</a>
+        <?php if (!empty($brands)): ?>
+            <?php foreach ($brands as $index => $brand): ?>
+                <a href="brand.php?id=<?= htmlspecialchars($brand['id']) ?>"
+                   role="menuitem"
+                   class="bland"
+                   style="--index: <?= $index ?>; top: <?= 75 + $index * 50 ?>px; left: <?= 170 - $index * 60 ?>px;">
+                    <?= htmlspecialchars($brand['name']) ?>
+                </a>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p style="padding: 10px; margin-top:65px;">お気に入りのブランドが登録されていません。</p>
+        <?php endif; ?>
     </nav>
-  </div>
-  <div class="header_space"></div>
-  <!-- headerここまで -->
+</div>
+<?php endif; ?>
+
+<div class="header_space"></div>
+<!-- headerここまで -->
 
   <main>
     <div class="container">
@@ -225,7 +275,7 @@ $payment_names = [
       <!-- アクションボタン -->
       <div class="action_buttons">
         <a href="mypage.php" class="order_history_btn">注文履歴を見る</a>
-        <a href="toppage.php" class="continue_shopping_btn">ショッピングを続ける</a>
+        <a href="index.php" class="continue_shopping_btn">ショッピングを続ける</a>
       </div>
 
       <!-- お問い合わせ -->
