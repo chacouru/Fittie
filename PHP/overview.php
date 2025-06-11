@@ -115,27 +115,27 @@ if (isset($_SESSION['user_id'])) {
     </section>
 </main>
 
-<!-- Footer -->
-<footer class="footer">
+<!-- フッターここから -->
+ <footer class="footer">
     <div class="footer_container">
-        <a href="index.php">
-            <div class="footer_logo"><h2>fitty.</h2></div>
-        </a>
+        <a href="index.php"><div class="footer_logo"><h2>fitty.</h2></div></a>
         <div class="footer_links">
             <a href="./overview.php">会社概要</a>
             <a href="./terms.php">利用規約</a>
             <a href="./privacy.php">プライバシーポリシー</a>
+            <a href="./qa.php">よくある質問</a>
         </div>
         <div class="footer_sns">
-            <a href="#" aria-label="Twitter"><img src="icons/twitter.svg" alt="Twitter"></a>
-            <a href="#" aria-label="Instagram"><img src="icons/instagram.svg" alt="Instagram"></a>
-            <a href="#" aria-label="Facebook"><img src="icons/facebook.svg" alt="Facebook"></a>
+            <a href="#"><img src="img/sns_icon/twitter.png" alt="Twitter"><a>
+            <a href="#"><img src="img/sns_icon/instagram.png" alt="Instagram"><a>
+            <a href="#"><img src="img/sns_icon/youtube.png" alt="YouTube"><a>
         </div>
         <div class="footer_copy">
             <small>&copy; 2025 Fitty All rights reserved.</small>
         </div>
     </div>
 </footer>
+<!-- フッターここまで -->
 <script src="../JavaScript/hamburger.js"></script>
 </body>
 </html>

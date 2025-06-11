@@ -130,8 +130,8 @@ if (isset($_SESSION['user_id'])) {
     </section>
 </main>
 
-<!-- footer -->
-<footer class="footer">
+<!-- フッターここから -->
+ <footer class="footer">
     <div class="footer_container">
         <a href="index.php"><div class="footer_logo"><h2>fitty.</h2></div></a>
         <div class="footer_links">
@@ -140,15 +140,16 @@ if (isset($_SESSION['user_id'])) {
             <a href="./privacy.php">プライバシーポリシー</a>
         </div>
         <div class="footer_sns">
-            <a href="#"><img src="icons/twitter.svg" alt="Twitter"></a>
-            <a href="#"><img src="icons/instagram.svg" alt="Instagram"></a>
-            <a href="#"><img src="icons/facebook.svg" alt="Facebook"></a>
+            <a href="#"><img src="/PHP/img/sns_icon/twitter.png" alt="Twitter"></a>
+            <a href="#"><img src="/PHP/img/sns_icon/instagram.png" alt="Instagram"></a>
+            <a href="#"><img src="/PHP/img/sns_icon/youtube.png" alt="YouTube"></a>
         </div>
         <div class="footer_copy">
             <small>&copy; 2025 Fitty All rights reserved.</small>
         </div>
     </div>
 </footer>
+<!-- フッターここまで -->
 
 <script src="../JavaScript/hamburger.js"></script>
 </body>
