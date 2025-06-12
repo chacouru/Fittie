@@ -79,7 +79,30 @@ if (isset($_SESSION['user_id'])) {
     </nav>
 </div>
 <?php endif; ?>
-<!-- headerここまで -->
+
+<div class="backdrop" id="menuBackdrop"></div>
+
+<?php if (isset($_SESSION['user_id'])): ?>
+<div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
+  <nav>
+    <?php if (!empty($brands)): ?>
+      <?php foreach ($brands as $index => $brand): ?>
+        <a href="brand.php?id=<?= htmlspecialchars($brand['id']) ?>"
+   role="menuitem"
+   class="brand">
+  <?= htmlspecialchars($brand['name']) ?>
+</a>
+
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p style="padding: 10px;">お気に入りのブランドが登録されていません。</p>
+    <?php endif; ?>
+  </nav>
+</div>
+<?php endif; ?>
+
+<div class="header_space"></div>
+  <!-- headerここまで -->
     <div id="conteiner">
       <main>
           <h2>新規登録</h2>
