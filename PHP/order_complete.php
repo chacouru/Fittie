@@ -108,7 +108,7 @@ $payment_names = [
 </head>
 
 <body>
- <!-- headerここから -->
+<!-- headerここから -->
 <header class="header">
     <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
         <span class="bar"></span><span class="bar"></span><span class="bar"></span>
@@ -116,6 +116,7 @@ $payment_names = [
     <div class="header_logo">
         <h1><a href="./index.php">fitty.</a></h1>
     </div>
+    <nav class="header_nav"> 
             <nav class="header_nav"> <?php
     if (isset($_SESSION['user_id'])) {
         echo '<div class="login_logout_img">
@@ -160,8 +161,29 @@ $payment_names = [
 </div>
 <?php endif; ?>
 
+<div class="backdrop" id="menuBackdrop"></div>
+
+<?php if (isset($_SESSION['user_id'])): ?>
+<div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
+  <nav>
+    <?php if (!empty($brands)): ?>
+      <?php foreach ($brands as $index => $brand): ?>
+        <a href="brand.php?id=<?= htmlspecialchars($brand['id']) ?>"
+   role="menuitem"
+   class="brand">
+  <?= htmlspecialchars($brand['name']) ?>
+</a>
+
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p style="padding: 10px;">お気に入りのブランドが登録されていません。</p>
+    <?php endif; ?>
+  </nav>
+</div>
+<?php endif; ?>
+
 <div class="header_space"></div>
-<!-- headerここまで -->
+  <!-- headerここまで -->
 
   <main>
     <div class="container">

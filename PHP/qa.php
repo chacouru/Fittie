@@ -89,11 +89,11 @@ if (isset($_SESSION['user_id'])) {
     <?php if (!empty($brands)): ?>
       <?php foreach ($brands as $index => $brand): ?>
         <a href="brand.php?id=<?= htmlspecialchars($brand['id']) ?>"
-           role="menuitem"
-           class="bland"
-           style="--index: <?= $index ?>; top: <?= 75 + $index * 50 ?>px; left: <?= 170 - $index * 60 ?>px;">
-          <?= htmlspecialchars($brand['name']) ?>
-        </a>
+   role="menuitem"
+   class="brand">
+  <?= htmlspecialchars($brand['name']) ?>
+</a>
+
       <?php endforeach; ?>
     <?php else: ?>
       <p style="padding: 10px;">お気に入りのブランドが登録されていません。</p>
@@ -101,6 +101,8 @@ if (isset($_SESSION['user_id'])) {
   </nav>
 </div>
 <?php endif; ?>
+
+<div class="header_space"></div>
   <!-- headerここまで -->
 <main>
 

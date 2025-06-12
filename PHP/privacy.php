@@ -81,8 +81,29 @@ if (isset($_SESSION['user_id'])) {
 </div>
 <?php endif; ?>
 
+<div class="backdrop" id="menuBackdrop"></div>
+
+<?php if (isset($_SESSION['user_id'])): ?>
+<div class="menu_overlay" id="globalMenu" role="navigation" aria-hidden="true">
+  <nav>
+    <?php if (!empty($brands)): ?>
+      <?php foreach ($brands as $index => $brand): ?>
+        <a href="brand.php?id=<?= htmlspecialchars($brand['id']) ?>"
+   role="menuitem"
+   class="brand">
+  <?= htmlspecialchars($brand['name']) ?>
+</a>
+
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p style="padding: 10px;">お気に入りのブランドが登録されていません。</p>
+    <?php endif; ?>
+  </nav>
+</div>
+<?php endif; ?>
+
 <div class="header_space"></div>
-<!-- headerここまで -->
+  <!-- headerここまで -->
     <main>
     <h1 id="title">プライバシーポリシー</h1>
     <p>株式会社fitty.（以下「当社」といいます）は、当社が運営するファッションECサイト「fitty.」（以下「本サイト」といいます）における個人情報の取り扱いについて、以下のとおりプライバシーポリシーを定めます。</p>
