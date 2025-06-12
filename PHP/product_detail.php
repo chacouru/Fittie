@@ -166,7 +166,7 @@ function getProductImagePath($product) {
     <link rel="stylesheet" href="../CSS/products.css">
 </head>
 <body>
-<!-- headerここから -->
+   <!-- headerここから -->
 <header class="header">
     <button class="menu_button" id="menuToggle" aria-label="メニューを開閉" aria-expanded="false" aria-controls="globalMenu">
         <span class="bar"></span><span class="bar"></span><span class="bar"></span>
@@ -185,7 +185,7 @@ function getProductImagePath($product) {
 ';
     } else {
         echo '<div class="login_logout_img">
-  <a href="logout.php">
+  <a href="login.php">
     <img src="./img/login.png" alt="ログイン">
   </a>
 </div>

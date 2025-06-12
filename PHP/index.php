@@ -337,7 +337,7 @@ function displayProductCarousel($products, $section_id, $section_title)
 ';
     } else {
         echo '<div class="login_logout_img">
-  <a href="logout.php">
+  <a href="login.php">
     <img src="./img/login.png" alt="ログイン">
   </a>
 </div>
