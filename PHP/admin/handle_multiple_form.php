@@ -33,15 +33,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['products'])) {
         // トランザクションをコミット
         $pdo->commit();
 
-        echo "{$count} 件の商品をフォームから登録しました。";
+        // 成功メッセージをセッションに保存してリダイレクト
+        session_start();
+        $_SESSION['success_message'] = "{$count} 件の商品をフォームから登録しました。";
+        header('Location: add_product.php');
+        exit;
 
     } catch (PDOException $e) {
         // エラーが発生した場合はロールバック
         $pdo->rollBack();
         error_log('データベースエラー: ' . $e->getMessage());
-        echo "データベース登録中にエラーが発生しました。";
+        
+        // エラーメッセージをセッションに保存してリダイレクト
+        session_start();
+        $_SESSION['error_message'] = "データベース登録中にエラーが発生しました。";
+        header('Location: add_product.php');
+        exit;
     }
 } else {
-    echo "無効なデータです。";
+    // 無効なデータの場合もリダイレクト
+    session_start();
+    $_SESSION['error_message'] = "無効なデータです。";
+    header('Location: add_product.php');
+    exit;
 }
 ?>

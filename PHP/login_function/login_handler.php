@@ -1,4 +1,5 @@
 <?php
+//login.phpからPOST受信
 require_once __DIR__ . '/functions.php';
 session_start();
 
