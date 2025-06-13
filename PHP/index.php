@@ -1,9 +1,12 @@
 <?php
-// エラー表示を有効にする（開発時のみ）
+// エラー表示
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// ini_set('display_errors', 1);
+//エラー表示オフ
+ini_set('display_errors', 0);
 
 try {
+    
     require_once __DIR__ . '/login_function/session.php';
     
     // $pdoの存在確認

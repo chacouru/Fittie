@@ -34,12 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['brand']) || isset($_GE
     $conditions = [];
     $params = [];
 
-    if (!empty($_GET['brand'])) {
+    // ブランド条件（'all'でない場合のみ追加）
+    if (!empty($_GET['brand']) && $_GET['brand'] !== 'all') {
         $conditions[] = 'p.brand_id = ?';
         $params[] = $_GET['brand'];
     }
 
-    if (!empty($_GET['genre'])) {
+    // ジャンル条件（'all'でない場合のみ追加）
+    if (!empty($_GET['genre']) && $_GET['genre'] !== 'all') {
         $conditions[] = 'p.category_id = ?';
         $params[] = $_GET['genre'];
     }
@@ -157,6 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['brand']) || isset($_GE
             <div class="select_container">
                 <select name="brand" required>
                     <option value="" selected disabled hidden>ブランド</option>
+                    <option value="all" <?= (isset($_GET['brand']) && $_GET['brand'] == 'all') ? 'selected' : '' ?>>すべてのブランド</option>
                     <?php foreach ($all_brands as $brand_option): ?>
                         <option value="<?= htmlspecialchars($brand_option['id']) ?>"
                             <?= (isset($_GET['brand']) && $_GET['brand'] == $brand_option['id']) ? 'selected' : '' ?>>
@@ -168,6 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['brand']) || isset($_GE
             <div class="select_container">
                 <select name="genre" required>
                     <option value="" selected disabled hidden>ジャンル</option>
+                    <option value="all" <?= (isset($_GET['genre']) && $_GET['genre'] == 'all') ? 'selected' : '' ?>>すべてのジャンル</option>
                     <?php foreach ($genres as $genre_option): ?>
                         <option value="<?= htmlspecialchars($genre_option['id']) ?>"
                             <?= (isset($_GET['genre']) && $_GET['genre'] == $genre_option['id']) ? 'selected' : '' ?>>

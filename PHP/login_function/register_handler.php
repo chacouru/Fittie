@@ -1,4 +1,5 @@
 <?php
+//login.phpからPOST受信
 require_once __DIR__ . '/functions.php';
 
 session_start();
@@ -6,7 +7,8 @@ session_start();
 // フォームから受け取るデータ
 $name     = $_POST['name'];
 $email    = $_POST['email'];
-$password = password_hash($_POST['password'], PASSWORD_DEFAULT); // パスワードだけハッシュ
+// パスワードだけハッシュ
+$password = password_hash($_POST['password'], PASSWORD_DEFAULT); 
 $address  = $_POST['address'];
 $phone    = $_POST['phone'];
 

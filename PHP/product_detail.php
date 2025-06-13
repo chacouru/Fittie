@@ -42,11 +42,34 @@ try {
         throw new Exception("商品が見つかりませんでした。");
     }
 
-    // 商品画像パスを生成（商品カード関数と同じ方式）
-    $brand_name = isset($product['brand_name']) ? trim($product['brand_name']) : 'no-brand';
-    $safe_brand_folder = preg_replace('/[^\w\-]/u', '_', $brand_name);
+    // データベースから取得したブランド情報を使用
+    $brand_name = 'default';
+    $safe_brand_folder = 'default';
+
+    if (isset($product['brand_name']) && trim($product['brand_name']) !== '') {
+        $brand_name = trim($product['brand_name']);
+        // brand_folderがある場合はそれを使用、なければbrand_nameを使用
+        $safe_brand_folder = isset($product['brand_folder']) && trim($product['brand_folder']) !== ''
+            ? trim($product['brand_folder'])
+            : $brand_name;
+    }
+
+    // 画像パス候補の構築
     $image_file = $product['image'] ?? 'no-image.png';
-$product_image_path = "img/products/{$safe_brand_folder}/{$image_file}";
+    $possible_paths = [
+        "../PHP/img/products/{$safe_brand_folder}/{$image_file}",
+        "../PHP/img/products/default/{$image_file}",
+        "../PHP/img/products/{$image_file}",
+        "../PHP/img/no-image.png"
+    ];
+
+    $product_image_path = "../PHP/img/no-image.png";
+    foreach ($possible_paths as $path) {
+        if (file_exists($path)) {
+            $product_image_path = $path;
+            break;
+        }
+    }
     // セール情報処理
     $display_price = $product['price'];
     $sale_info = '';
@@ -148,10 +171,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
 
 // 関連商品用の関数も修正
 function getProductImagePath($product) {
-    $brand_name = isset($product['brand_name']) ? trim($product['brand_name']) : 'no-brand';
-    $safe_brand_folder = preg_replace('/[^\w\-]/u', '_', $brand_name);
+    // データベースから取得したブランド情報を使用
+    $brand_name = 'default';
+    $safe_brand_folder = 'default';
+
+    if (isset($product['brand_name']) && trim($product['brand_name']) !== '') {
+        $brand_name = trim($product['brand_name']);
+        // brand_folderがある場合はそれを使用、なければbrand_nameを使用
+        $safe_brand_folder = isset($product['brand_folder']) && trim($product['brand_folder']) !== ''
+            ? trim($product['brand_folder'])
+            : $brand_name;
+    }
+
+    // 画像パス候補の構築
     $image_file = $product['image'] ?? 'no-image.png';
-    return "img/products/{$safe_brand_folder}/{$image_file}";
+    $possible_paths = [
+        "../PHP/img/products/{$safe_brand_folder}/{$image_file}",
+        "../PHP/img/products/default/{$image_file}",
+        "../PHP/img/products/{$image_file}",
+        "../PHP/img/no-image.png"
+    ];
+
+    $image_path = "../PHP/img/no-image.png";
+    foreach ($possible_paths as $path) {
+        if (file_exists($path)) {
+            $image_path = $path;
+            break;
+        }
+    }
+    
+    return $image_path;
 }
 ?>
 
